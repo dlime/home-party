@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "Home Party",
+  "name": "Music streaming aggregator",
   "icons": [
     {
       "src": "favicon.ico",
