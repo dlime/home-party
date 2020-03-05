@@ -6,7 +6,7 @@ class SongsTable extends Component {
   columns = [
     { path: "name", label: "Name" },
     { path: "duration", label: "Duration" },
-    { path: "api", label: "Site" },
+    { path: "host", label: "Site" },
     {
       path: "delete",
       content: song => {
