@@ -14,12 +14,24 @@ const youtubeConfig = {
   color: "White"
 };
 
+const soundcloudApiPrefix = "https://soundcloud.com/";
+const soundcloudConfig = {
+  auto_play: false,
+  buying: false,
+  sharing: false,
+  download: false,
+  show_artwork: true,
+  show_playcount: false,
+  show_user: false
+};
+
 function getUrl(id, host) {
   switch (host.toLowerCase()) {
     case "youtube":
       return youtubeApiPrefix + id;
-    case "spotify":
     case "soundcloud":
+      return soundcloudApiPrefix + id;
+    case "spotify":
     default:
       return "";
   }
@@ -40,6 +52,9 @@ function Player({ id, host, isPlaying, onPlay, onPause }) {
         config={{
           youtube: {
             playerVars: youtubeConfig
+          },
+          soundcloud: {
+            options: soundcloudConfig
           }
         }}
         onPlay={onPlay}
