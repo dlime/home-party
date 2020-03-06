@@ -5,7 +5,7 @@ import TableBody from "./TableBody";
 
 const Table = ({ data, columns, sortColumn, onDelete, onSort }) => {
   return (
-    <table className="table">
+    <table className="table table-hover">
       <TableHeader columns={columns} sortColumn={sortColumn} onSort={onSort} />
       <TableBody data={data} columns={columns} onDelete={onDelete} />
     </table>

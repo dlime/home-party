@@ -4,7 +4,20 @@ import Table from "./common/Table";
 
 class SongsTable extends Component {
   columns = [
-    { path: "name", label: "Name" },
+    {
+      path: "name",
+      label: "Name",
+      content: song => {
+        return (
+          <button
+            className="btn bg-transparent"
+            onClick={() => this.props.onSongClick(song)}
+          >
+            {song.name}
+          </button>
+        );
+      }
+    },
     { path: "duration", label: "Duration" },
     { path: "host", label: "Site" },
     {

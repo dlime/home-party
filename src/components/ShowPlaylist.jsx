@@ -28,6 +28,10 @@ class ShowPlaylist extends Component {
     this.setState({ songs: newSongs });
   };
 
+  handleSongClick = song => {
+    console.log("CLICKED ", song.name);
+  };
+
   handleSortClick = sortColumn => {
     this.setState({ sortColumn });
   };
@@ -71,6 +75,7 @@ class ShowPlaylist extends Component {
           <SongsTable
             data={data}
             sortColumn={sortColumn}
+            onSongClick={this.handleSongClick}
             onDelete={this.handleDeleteButton}
             onSort={this.handleSortClick}
           />
