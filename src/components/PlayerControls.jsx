@@ -1,13 +1,15 @@
 import React from "react";
-import PropTypes from "prop-types";
+// import PropTypes from "prop-types";
 
-PlayerControls.propTypes = {};
+// PlayerControls.propTypes = {};
 
 function PlayerControls(props) {
   return (
-    <footer className="py-4 bg-dark">
+    <footer className="py-4 bg-light">
       <div className="container text-center">
-        <i className="fas fa-play" /> <i className="fas fa-angle-double-down" />
+        <button className="btn btn-primary btn-circle btn-circle-xl m-1">
+          <i className="fas fa-play" />
+        </button>
       </div>
     </footer>
   );
