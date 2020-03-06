@@ -3,6 +3,7 @@ import { Switch, Route, Redirect } from "react-router-dom";
 import NavBar from "./components/NavBar";
 import NotFound from "./components/common/NotFound";
 import ShowPlaylist from "./components/ShowPlaylist";
+import PlayerControls from "./components/PlayerControls";
 
 class App extends Component {
   render() {
@@ -22,6 +23,7 @@ class App extends Component {
             <Redirect to="/not-found" />
           </Switch>
         </main>
+        <PlayerControls />
       </React.Fragment>
     );
   }

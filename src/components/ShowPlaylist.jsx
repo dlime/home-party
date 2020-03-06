@@ -3,6 +3,7 @@ import SearchBox from "./common/SearchBox";
 import SongsTable from "./SongsTable";
 import { getSongs } from "../services/fakePlaylistService";
 import _ from "lodash";
+import Player from "./Player";
 
 class ShowPlaylist extends Component {
   state = {
@@ -40,8 +41,9 @@ class ShowPlaylist extends Component {
 
     let filteredSongs = songs;
     if (searchQuery) {
-      filteredSongs = songs.filter(
-        song => song.name.toLowerCase().startsWith(searchQuery.toLowerCase()) //TODO: improve search method
+      filteredSongs = songs.filter(song =>
+        //TODO: improve search method
+        song.name.toLowerCase().startsWith(searchQuery.toLowerCase())
       );
     }
 
@@ -59,7 +61,9 @@ class ShowPlaylist extends Component {
 
     return (
       <div className="row">
-        <div className="col"></div>
+        <div className="col">
+          <Player id="LKYPYj2XX80" host="youtube" />
+        </div>
 
         <div className="col">
           <SearchBox value={searchQuery} onChange={this.handleSearch} />
@@ -70,6 +74,10 @@ class ShowPlaylist extends Component {
             onSort={this.handleSortClick}
           />
         </div>
+
+        {/* <div className="row">
+          <PlayerControls />
+        </div> */}
       </div>
     );
   }
