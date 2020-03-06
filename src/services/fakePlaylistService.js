@@ -4,21 +4,21 @@ export const songs = [
     artist: "Daft Punk",
     name: "Around the World",
     duration: "160",
-    host: "YouTube"
+    api: "YouTube"
   },
   {
     _id: "5b21ca3eeb7f6fbccd471812",
     artist: "Chemical Brothers",
     name: "Star Guitar",
     duration: "100",
-    host: "Spotify"
+    api: "Spotify"
   },
   {
     _id: "5b21ca3eeb7f6fbccd471813",
     artist: "Aphex Twin",
     name: "Analogue Bubblebath",
     duration: "110",
-    host: "Soundcloud"
+    api: "Soundcloud"
   }
 ];
 
