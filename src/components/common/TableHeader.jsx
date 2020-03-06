@@ -7,10 +7,10 @@ const renderSortIcon = (path, sortColumn) => {
   }
 
   if (sortColumn.order === "desc") {
-    return <i className="fa fa-sort-asc" aria-hidden="true"></i>;
+    return <i className="fas fa-sort-up" />;
   }
 
-  return <i className="fa fa-sort-desc" aria-hidden="true"></i>;
+  return <i className="fas fa-sort-down" />;
 };
 
 const raiseSort = (path, sortColumn, onSort) => {

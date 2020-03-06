@@ -58,6 +58,7 @@ class ShowPlaylist extends Component {
 
   render() {
     const { searchQuery, sortColumn } = this.state;
+    const data = this.getSortedSongs();
 
     return (
       <div className="row">
@@ -68,7 +69,7 @@ class ShowPlaylist extends Component {
         <div className="col">
           <SearchBox value={searchQuery} onChange={this.handleSearch} />
           <SongsTable
-            data={this.getSortedSongs()}
+            data={data}
             sortColumn={sortColumn}
             onDelete={this.handleDeleteButton}
             onSort={this.handleSortClick}
