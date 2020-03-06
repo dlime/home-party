@@ -2,11 +2,6 @@ import React from "react";
 import PropTypes from "prop-types";
 import ReactPlayer from "react-player";
 
-Player.propTypes = {
-  id: PropTypes.string.isRequired,
-  host: PropTypes.string.isRequired
-};
-
 const youtubeApiPrefix = "https://www.youtube.com/watch?v=";
 const youtubeConfig = {
   controls: 0,
@@ -30,7 +25,7 @@ function getUrl(id, host) {
   }
 }
 
-function Player({ id, host }) {
+function Player({ id, host, isPlaying, onPlay, onPause }) {
   const url = getUrl(id, host);
 
   return (
@@ -39,18 +34,27 @@ function Player({ id, host }) {
         className="react-player"
         url={url}
         width="100%"
+        controls={false}
+        playing={isPlaying}
         // height="100%"
-        // youtubeConfig={{
-        //   playerVars: { controls: 0, disablekb: 0 }
-        // }}
         config={{
           youtube: {
             playerVars: youtubeConfig
           }
         }}
+        onPlay={onPlay}
+        onPause={onPause}
       />
     </div>
   );
 }
+
+Player.propTypes = {
+  id: PropTypes.string.isRequired,
+  host: PropTypes.string.isRequired,
+  isPlaying: PropTypes.bool.isRequired,
+  onPlay: PropTypes.func.isRequired,
+  onPause: PropTypes.func.isRequired
+};
 
 export default Player;

@@ -4,17 +4,22 @@ import SongsTable from "./SongsTable";
 import { getSongs } from "../services/fakePlaylistService";
 import _ from "lodash";
 import Player from "./Player";
+import PlayerControls from "./PlayerControls";
 
 class ShowPlaylist extends Component {
   state = {
-    songs: [],
     searchQuery: "",
-    sortColumn: { path: "name", order: "asc" }
+    sortColumn: { path: "name", order: "asc" },
+
+    songs: [],
+    selectedSong: { host_id: "", host: "" },
+    isPlaying: false
   };
 
   componentDidMount() {
     const songs = getSongs();
-    this.setState({ songs });
+    const selectedSong = songs.length > 0 ? songs[0] : null;
+    this.setState({ songs, selectedSong });
   }
 
   handleDeleteButton = async id => {
@@ -28,8 +33,8 @@ class ShowPlaylist extends Component {
     this.setState({ songs: newSongs });
   };
 
-  handleSongClick = song => {
-    console.log("CLICKED ", song.name);
+  handleSongClick = selectedSong => {
+    this.setState({ selectedSong });
   };
 
   handleSortClick = sortColumn => {
@@ -38,6 +43,19 @@ class ShowPlaylist extends Component {
 
   handleSearch = query => {
     this.setState({ searchQuery: query });
+  };
+
+  handlePlayButtonClick = () => {
+    const isPlaying = !this.state.isPlaying;
+    this.setState({ isPlaying });
+  };
+
+  handlePlayerOnPlay = () => {
+    this.setState({ isPlaying: true });
+  };
+
+  handlePlayerOnPause = () => {
+    this.setState({ isPlaying: false });
   };
 
   getSortedSongs = () => {
@@ -61,30 +79,40 @@ class ShowPlaylist extends Component {
   };
 
   render() {
-    const { searchQuery, sortColumn } = this.state;
+    const { searchQuery, sortColumn, selectedSong, isPlaying } = this.state;
     const data = this.getSortedSongs();
 
     return (
-      <div className="row">
-        <div className="col">
-          <Player id="LKYPYj2XX80" host="youtube" />
-        </div>
+      <React.Fragment>
+        <main className="container">
+          <div className="row">
+            <div className="col">
+              <Player
+                id={selectedSong.host_id}
+                host={selectedSong.host}
+                isPlaying={isPlaying}
+                onPlay={this.handlePlayerOnPlay}
+                onPause={this.handlePlayerOnPause}
+              />
+            </div>
 
-        <div className="col">
-          <SearchBox value={searchQuery} onChange={this.handleSearch} />
-          <SongsTable
-            data={data}
-            sortColumn={sortColumn}
-            onSongClick={this.handleSongClick}
-            onDelete={this.handleDeleteButton}
-            onSort={this.handleSortClick}
-          />
-        </div>
-
-        {/* <div className="row">
-          <PlayerControls />
-        </div> */}
-      </div>
+            <div className="col">
+              <SearchBox value={searchQuery} onChange={this.handleSearch} />
+              <SongsTable
+                data={data}
+                sortColumn={sortColumn}
+                onSongClick={this.handleSongClick}
+                onDelete={this.handleDeleteButton}
+                onSort={this.handleSortClick}
+              />
+            </div>
+          </div>
+        </main>
+        <PlayerControls
+          isPlaying={isPlaying}
+          onPlayClick={this.handlePlayButtonClick}
+        />
+      </React.Fragment>
     );
   }
 }
