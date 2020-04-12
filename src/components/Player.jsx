@@ -11,7 +11,7 @@ const youtubeConfig = {
   iv_load_policy: 3,
   rel: 0,
   modestbranding: 1,
-  color: "White"
+  color: "White",
 };
 
 const soundcloudApiPrefix = "https://soundcloud.com/";
@@ -22,8 +22,10 @@ const soundcloudConfig = {
   download: false,
   show_artwork: true,
   show_playcount: false,
-  show_user: false
+  show_user: false,
 };
+
+const spotifyApiPrefix = "spotify:track:";
 
 function getUrl(id, host) {
   switch (host.toLowerCase()) {
@@ -48,14 +50,13 @@ function Player({ id, host, isPlaying, onPlay, onPause }) {
         width="100%"
         controls={false}
         playing={isPlaying}
-        // height="100%"
         config={{
           youtube: {
-            playerVars: youtubeConfig
+            playerVars: youtubeConfig,
           },
           soundcloud: {
-            options: soundcloudConfig
-          }
+            options: soundcloudConfig,
+          },
         }}
         onPlay={onPlay}
         onPause={onPause}
@@ -69,7 +70,7 @@ Player.propTypes = {
   host: PropTypes.string.isRequired,
   isPlaying: PropTypes.bool.isRequired,
   onPlay: PropTypes.func.isRequired,
-  onPause: PropTypes.func.isRequired
+  onPause: PropTypes.func.isRequired,
 };
 
 export default Player;
