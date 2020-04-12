@@ -5,7 +5,7 @@ export const songs = [
     name: "Around the World",
     duration: "160",
     host: "YouTube",
-    host_id: "LKYPYj2XX80"
+    host_id: "LKYPYj2XX80",
   },
   {
     _id: "5b21ca3eeb7f6fbccd471812",
@@ -13,7 +13,7 @@ export const songs = [
     name: "Star Guitar",
     duration: "100",
     host: "Spotify",
-    host_id: "xxxxxx"
+    host_id: "7xGfFoTpQ2E7fRF5lN10tr",
   },
   {
     _id: "5b21ca3eeb7f6fbccd471813",
@@ -21,7 +21,7 @@ export const songs = [
     name: "Polynomial-C",
     duration: "110",
     host: "Soundcloud",
-    host_id: "r-srecords/aphex-twin-polynomial-c-1"
+    host_id: "r-srecords/aphex-twin-polynomial-c-1",
   },
   {
     _id: "5b21ca3eeb7f6fbccd471",
@@ -29,10 +29,10 @@ export const songs = [
     name: "Cassius 1999",
     duration: "160",
     host: "YouTube",
-    host_id: "_PmU6G_Z4n8"
-  }
+    host_id: "_PmU6G_Z4n8",
+  },
 ];
 
 export function getSongs() {
-  return songs.filter(song => song);
+  return songs.filter((song) => song);
 }
