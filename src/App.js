@@ -12,11 +12,6 @@ class App extends Component {
         <Switch>
           <Route path="/not-found" component={NotFound} />
           <Route path="/playlist" component={ShowPlaylist} />
-          {/* <Route
-              path="/movies"
-              render={props => <ShowMovies {...props} user={currentUser} />}
-            /> */}
-          {/* <Route path="/register" component={RegisterForm} /> */}
           <Redirect from="/" exact to="/playlist" />
           <Redirect to="/not-found" />
         </Switch>

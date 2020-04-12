@@ -1,9 +1,9 @@
 // TODO: rename it as SpotifyConfig and remove all spotify suffixes from var/func names
-// - extract API player endpoint as named var here
+// - extract API player endpoint as named var
 
 export const spotifyAuthEndpoint = "https://accounts.spotify.com/authorize";
 export const spotifyClientId = "7bc3c9bdb4044375bb470a662b6ae874";
-export const spotifyRedirectUri = "http://localhost:3000/playlist";
+export const spotifyRedirectUri = process.env.REACT_APP_SPOTIFY_REDIRECT;
 export const spotifyScopes = [
   // for spotify web player SDK
   "streaming",
