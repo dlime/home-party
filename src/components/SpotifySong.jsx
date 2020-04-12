@@ -1,33 +1,34 @@
 import React, { Component } from "react";
-// import Player from "../Player";
+
+const printDebug = false;
 
 class SpotitySong extends Component {
   state = {
     player: null,
+    playerState: { paused: true },
     isReady: false,
     firstTimeClicked: true,
-    isPlaying: false,
     currentTrack: {
-      album: {
-        images: [{ url: "" }],
-      },
       name: "",
       artists: [{ name: "" }],
-      duration_ms: 0,
+      album: { images: [{}, {}, { url: "" }] },
     },
-
-    currentDeviceId: "",
-    deviceId: "",
-    devices: [],
-    error: "",
-    errorType: "",
-    isActive: false,
-    isInitializing: false,
-    isSaved: false,
-    isUnsupported: false,
-    needsUpdate: false,
-    track: this.emptyTrack,
   };
+
+  async componentDidMount() {
+    await this.waitForSpotifyWebPlaybackSDKToLoad();
+    await this.initializePlayer();
+    await this.setDevice();
+  }
+
+  async componentWillUnmount() {
+    let player = this.state.player;
+    if (player) {
+      await player.disconnect();
+    }
+
+    this.setState({ player });
+  }
 
   waitForSpotifyWebPlaybackSDKToLoad = async () => {
     return new Promise((resolve) => {
@@ -44,15 +45,8 @@ class SpotitySong extends Component {
     });
   };
 
-  async componentDidMount() {
-    await this.waitForSpotifyWebPlaybackSDKToLoad();
-    await this.initializePlayer();
-    await this.setDevice();
-  }
-
   initializePlayer = async () => {
     const { playerName, token } = this.props;
-
     const player = new window.Spotify.Player({
       name: playerName,
       getOAuthToken: (callback) => callback(token),
@@ -71,59 +65,32 @@ class SpotitySong extends Component {
       console.error("playback_error", message);
     });
     player.addListener("player_state_changed", (state) => {
-      console.log("player_state_changed", state);
+      if (!state) {
+        return;
+      }
+      if (printDebug) {
+        console.log("player_state_changed", state);
+        console.log("current track", state.track_window.current_track);
+      }
       this.setState({ currentTrack: state.track_window.current_track });
+      this.setState({ playerState: state });
     });
+
     player.addListener("ready", ({ device_id }) => {
+      // TODO: disable play/pause button until everything is loaded
       console.log("Ready with Device ID", device_id);
       this.setState({ isReady: true });
+      if (this.props.isPlaying) {
+        this.play(this.props.url);
+      }
     });
+
     player.addListener("not_ready", ({ device_id }) => {
       console.log("Device ID has gone offline", device_id);
     });
 
-    // player.addListener("ready", this.handlePlayerStatus);
-    // player.addListener("not_ready", this.handlePlayerStatus);
-    // player.addListener("player_state_changed", this.handlePlayerStateChanges);
-    // player.addListener("initialization_error", error =>
-    //   this.handlePlayerErrors("initialization_error", error.message)
-    // );
-    // player.addListener("authentication_error", error =>
-    //   this.handlePlayerErrors("authentication_error", error.message)
-    // );
-    // player.addListener("account_error", error =>
-    //   this.handlePlayerErrors("account_error", error.message)
-    // );
-    // player.addListener("playback_error", error =>
-    //   this.handlePlayerErrors("playback_error", error.message)
-    // );
-
     await player.connect();
     this.setState({ player });
-  };
-
-  async componentWillUnmount() {
-    let player = this.state.player;
-    if (player) {
-      await player.disconnect();
-    }
-
-    this.setState({ player });
-  }
-
-  handleButtonClick = async () => {
-    if (!this.state.isReady) {
-      console.log("handleButtonClick player not ready.");
-      return;
-    }
-
-    if (this.state.firstTimeClicked) {
-      this.play("spotify:track:7xGfFoTpQ2E7fRF5lN10tr");
-      this.setState({ firstTimeClicked: false });
-      return;
-    }
-
-    await this.state.player.togglePlay();
   };
 
   setDevice = async () => {
@@ -162,20 +129,61 @@ class SpotitySong extends Component {
     });
   };
 
+  async componentDidUpdate(prevProps) {
+    if (!this.state.isReady) {
+      console.log("handleButtonClick player not ready.");
+      return;
+    }
+
+    const { url, isPlaying } = this.props;
+    const { firstTimeClicked, playerState } = this.state;
+
+    if (!prevProps.isPlaying && isPlaying && playerState.paused) {
+      if (firstTimeClicked) {
+        this.play(url);
+        this.setState({ firstTimeClicked: false });
+        return;
+      }
+
+      await this.state.player.resume();
+    }
+
+    if (prevProps.isPlaying && !isPlaying && !playerState.paused) {
+      await this.state.player.pause();
+    }
+    // TODO: implement a mechanysm to 100% sync with play/pause button state
+    // (e.g. user clicks when song is not ready)
+  }
+
   render() {
+    const { currentTrack, playerState } = this.state;
+    const { isPlaying } = this.props;
     return (
       <React.Fragment>
-        {/* <Player
-          item={this.state.currentTrack}
-          is_playing={true}
-          progress_ms={0}
-        /> */}
-        <button
-          enabled={this.state.isReady.toString()}
-          onClick={this.handleButtonClick}
+        <div
+          className="spotify-wrapper"
+          style={{
+            backgroundImage: `url(${this.state.currentTrack.album.images[2].url})`,
+          }}
         >
-          PLAY/PAUSE
-        </button>
+          {printDebug && (
+            <div>
+              <h2>
+                <b>Track name:</b> {currentTrack.name}
+              </h2>
+              <h2>
+                <b>Artist name:</b>
+                {currentTrack.artists[0].name}
+              </h2>
+              <h2>
+                <b>Player paused:</b> {playerState.paused ? "Yes" : "No"}
+              </h2>
+              <h2>
+                <b>Is playing?</b> {isPlaying ? "Yes" : "No"}
+              </h2>
+            </div>
+          )}
+        </div>
       </React.Fragment>
     );
   }

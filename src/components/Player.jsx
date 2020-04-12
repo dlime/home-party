@@ -8,9 +8,11 @@ import {
   spotifyClientId,
   spotifyScopes,
   spotifyRedirectUri,
+  getSpotifyTokenFromHash,
 } from "../config.js";
 
-const youtubeApiPrefix = "https://www.youtube.com/watch?v=";
+// TODO: move these constants in a config file
+const youtubeUrlPrefix = "https://www.youtube.com/watch?v=";
 const youtubeConfig = {
   controls: 0,
   disablekb: 1,
@@ -22,7 +24,7 @@ const youtubeConfig = {
   color: "White",
 };
 
-const soundcloudApiPrefix = "https://soundcloud.com/";
+const soundcloudUrlPrefix = "https://soundcloud.com/";
 const soundcloudConfig = {
   auto_play: false,
   buying: false,
@@ -33,10 +35,20 @@ const soundcloudConfig = {
   show_user: false,
 };
 
+const spotifyUrlPrefix = "spotify:track:";
+
 class Player extends Component {
   state = {
     token: null,
   };
+
+  componentDidMount() {
+    const token = getSpotifyTokenFromHash(window.location.hash);
+    if (token) {
+      // TODO: store token into session + check if expired
+      this.setState({ token });
+    }
+  }
 
   handleScriptCreate = () => {
     window.onSpotifyWebPlaybackSDKReady = () => {
@@ -49,9 +61,11 @@ class Player extends Component {
   getUrl = (id, host) => {
     switch (host.toLowerCase()) {
       case "youtube":
-        return youtubeApiPrefix + id;
+        return youtubeUrlPrefix + id;
       case "soundcloud":
-        return soundcloudApiPrefix + id;
+        return soundcloudUrlPrefix + id;
+      case "spotify":
+        return spotifyUrlPrefix + id;
       default:
         return "";
     }
@@ -61,7 +75,6 @@ class Player extends Component {
     const { id, host, isPlaying, onPlay, onPause } = this.props;
     const { token } = this.state;
     const url = this.getUrl(id, host);
-    console.log("SPOTIFY TOKEN:", token);
     return (
       <React.Fragment>
         <Script
@@ -89,7 +102,10 @@ class Player extends Component {
               onPause={onPause}
             />
           )}
+
+          {/* TODO: Extract into a unique Spotify component */}
           {host === "Spotify" && !token && (
+            // TODO: extract this as SpotifyLogin component
             <div className="login-wrapper">
               <a
                 className="spotifybtn"
@@ -102,7 +118,12 @@ class Player extends Component {
             </div>
           )}
           {host === "Spotify" && token && (
-            <SpotitySong playerName="HOMEPARTY_PLAYER" token={token} />
+            <SpotitySong
+              playerName="HOMEPARTY_PLAYER"
+              token={token}
+              url={url}
+              isPlaying={isPlaying}
+            />
           )}
         </div>
       </React.Fragment>

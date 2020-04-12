@@ -13,7 +13,7 @@ export const songs = [
     name: "Star Guitar",
     duration: "100",
     host: "Spotify",
-    host_id: "7xGfFoTpQ2E7fRF5lN10tr",
+    host_id: "19mC6xktT1JyyycK6cQaXA", // https://developer.spotify.com/console/get-search-item/
   },
   {
     _id: "5b21ca3eeb7f6fbccd471813",

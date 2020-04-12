@@ -13,7 +13,7 @@ class ShowPlaylist extends Component {
 
     songs: [],
     selectedSong: { host_id: "", host: "" },
-    isPlaying: false
+    isPlaying: false,
   };
 
   componentDidMount() {
@@ -22,26 +22,26 @@ class ShowPlaylist extends Component {
     this.setState({ songs, selectedSong });
   }
 
-  handleDeleteButton = async id => {
+  handleDeleteButton = async (id) => {
     const { songs } = this.state;
     const originalSongs = songs;
 
-    const newSongs = originalSongs.filter(song => {
+    const newSongs = originalSongs.filter((song) => {
       return song._id !== id;
     });
 
     this.setState({ songs: newSongs });
   };
 
-  handleSongClick = selectedSong => {
+  handleSongClick = (selectedSong) => {
     this.setState({ selectedSong });
   };
 
-  handleSortClick = sortColumn => {
+  handleSortClick = (sortColumn) => {
     this.setState({ sortColumn });
   };
 
-  handleSearch = query => {
+  handleSearch = (query) => {
     this.setState({ searchQuery: query });
   };
 
@@ -50,10 +50,12 @@ class ShowPlaylist extends Component {
     this.setState({ isPlaying });
   };
 
+  // Note: callback for external player play/pause
   handlePlayerOnPlay = () => {
     this.setState({ isPlaying: true });
   };
 
+  // Note: callback for external player play/pause
   handlePlayerOnPause = () => {
     this.setState({ isPlaying: false });
   };
@@ -63,7 +65,7 @@ class ShowPlaylist extends Component {
 
     let filteredSongs = songs;
     if (searchQuery) {
-      filteredSongs = songs.filter(song =>
+      filteredSongs = songs.filter((song) =>
         //TODO: improve search method
         song.name.toLowerCase().startsWith(searchQuery.toLowerCase())
       );
