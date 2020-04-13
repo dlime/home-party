@@ -1,5 +1,5 @@
 {
     "env": {
-        "REACT_APP_SPOTIFY_REDIRECT": "https://home-party.now.sh/playlist"
+        "REACT_APP_SPOTIFY_REDIRECT": "@react-app-spotify-redirect"
     }
 }
