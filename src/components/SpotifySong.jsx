@@ -19,6 +19,7 @@ class SpotitySong extends Component {
     await this.waitForSpotifyWebPlaybackSDKToLoad();
     await this.initializePlayer();
     // await this.setDevice();
+    console.log("Redirect url", process.env.REACT_APP_SPOTIFY_REDIRECT);
   }
 
   async componentWillUnmount() {
