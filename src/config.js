@@ -3,7 +3,12 @@
 
 export const spotifyAuthEndpoint = "https://accounts.spotify.com/authorize";
 export const spotifyClientId = "7bc3c9bdb4044375bb470a662b6ae874";
-export const spotifyRedirectUri = "https://home-party.now.sh/playlist";
+
+// TODO: horrible hack to overcome my struggles with Zeit.co secrets/env variables. Pls fix
+export const spotifyRedirectUri = process.env.REACT_APP_SPOTIFY_REDIRECT
+  ? process.env.REACT_APP_SPOTIFY_REDIRECT
+  : "https://home-party.now.sh/playlist";
+
 export const spotifyScopes = [
   // for spotify web player SDK
   "streaming",
