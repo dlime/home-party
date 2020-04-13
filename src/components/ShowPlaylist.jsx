@@ -5,6 +5,7 @@ import { getSongs } from "../services/fakePlaylistService";
 import _ from "lodash";
 import Player from "./Player";
 import PlayerControls from "./PlayerControls";
+import { spotifyRedirectUri } from "../config";
 
 class ShowPlaylist extends Component {
   state = {
@@ -22,6 +23,7 @@ class ShowPlaylist extends Component {
     this.setState({ songs, selectedSong });
 
     console.log("Redirect url", process.env.REACT_APP_SPOTIFY_REDIRECT);
+    console.log("spotifyRedirectUri", spotifyRedirectUri);
   }
 
   handleDeleteButton = async (id) => {
