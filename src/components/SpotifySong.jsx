@@ -4,10 +4,10 @@ const printDebug = false;
 
 class SpotitySong extends Component {
   state = {
-    player: null,
-    playerState: { paused: true },
+    webPlaybackSdk: null,
     isReady: false,
     firstTimeClicked: true,
+    playerState: { paused: true },
     currentTrack: {
       name: "",
       artists: [{ name: "" }],
@@ -18,16 +18,16 @@ class SpotitySong extends Component {
   async componentDidMount() {
     await this.waitForSpotifyWebPlaybackSDKToLoad();
     await this.initializePlayer();
-    await this.setDevice();
+    // await this.setDevice();
   }
 
   async componentWillUnmount() {
-    let player = this.state.player;
-    if (player) {
-      await player.disconnect();
+    let webPlaybackSdk = this.state.webPlaybackSdk;
+    if (webPlaybackSdk) {
+      await webPlaybackSdk.disconnect();
     }
 
-    this.setState({ player });
+    this.setState({ webPlaybackSdk });
   }
 
   waitForSpotifyWebPlaybackSDKToLoad = async () => {
@@ -46,25 +46,25 @@ class SpotitySong extends Component {
   };
 
   initializePlayer = async () => {
-    const { playerName, token } = this.props;
-    const player = new window.Spotify.Player({
-      name: playerName,
+    const { token } = this.props;
+    const webPlaybackSdk = new window.Spotify.Player({
+      name: "Web Playback SDK",
       getOAuthToken: (callback) => callback(token),
     });
 
-    player.addListener("initialization_error", ({ message }) => {
+    webPlaybackSdk.addListener("initialization_error", ({ message }) => {
       console.error("initialization_error", message);
     });
-    player.addListener("authentication_error", ({ message }) => {
+    webPlaybackSdk.addListener("authentication_error", ({ message }) => {
       console.error("authentication_error", message);
     });
-    player.addListener("account_error", ({ message }) => {
+    webPlaybackSdk.addListener("account_error", ({ message }) => {
       console.error("account_error", message);
     });
-    player.addListener("playback_error", ({ message }) => {
+    webPlaybackSdk.addListener("playback_error", ({ message }) => {
       console.error("playback_error", message);
     });
-    player.addListener("player_state_changed", (state) => {
+    webPlaybackSdk.addListener("player_state_changed", (state) => {
       if (!state) {
         return;
       }
@@ -76,7 +76,7 @@ class SpotitySong extends Component {
       this.setState({ playerState: state });
     });
 
-    player.addListener("ready", ({ device_id }) => {
+    webPlaybackSdk.addListener("ready", ({ device_id }) => {
       // TODO: disable play/pause button until everything is loaded
       console.log("Ready with Device ID", device_id);
       this.setState({ isReady: true });
@@ -85,18 +85,25 @@ class SpotitySong extends Component {
       }
     });
 
-    player.addListener("not_ready", ({ device_id }) => {
+    webPlaybackSdk.addListener("not_ready", ({ device_id }) => {
       console.log("Device ID has gone offline", device_id);
     });
 
-    await player.connect();
-    this.setState({ player });
+    console.log("Request to connect SDK....");
+    const isSdkConnected = await webPlaybackSdk.connect();
+    if (!isSdkConnected) {
+      console.error("    FAIL: Web Playback SDK didn't connect to Spotify");
+    } else {
+      console.log("   SUCCESS: Web Playback SDK connected to Spotify");
+    }
+
+    this.setState({ webPlaybackSdk });
   };
 
   setDevice = async () => {
     const {
       _options: { getOAuthToken, id },
-    } = this.state.player;
+    } = this.state.webPlaybackSdk;
 
     getOAuthToken((access_token) => {
       fetch(`https://api.spotify.com/v1/me/player`, {
@@ -113,7 +120,7 @@ class SpotitySong extends Component {
   play = (spotifyUri) => {
     const {
       _options: { getOAuthToken, id },
-    } = this.state.player;
+    } = this.state.webPlaybackSdk;
 
     getOAuthToken((access_token) => {
       fetch(`https://api.spotify.com/v1/me/player/play?device_id=${id}`, {
@@ -131,7 +138,7 @@ class SpotitySong extends Component {
 
   async componentDidUpdate(prevProps) {
     if (!this.state.isReady) {
-      console.log("handleButtonClick player not ready.");
+      console.log("componentDidUpdate player not ready.");
       return;
     }
 
@@ -145,11 +152,11 @@ class SpotitySong extends Component {
         return;
       }
 
-      await this.state.player.resume();
+      await this.state.webPlaybackSdk.resume();
     }
 
     if (prevProps.isPlaying && !isPlaying && !playerState.paused) {
-      await this.state.player.pause();
+      await this.state.webPlaybackSdk.pause();
     }
     // TODO: implement a mechanysm to 100% sync with play/pause button state
     // (e.g. user clicks when song is not ready)

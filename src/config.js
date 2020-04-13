@@ -9,6 +9,7 @@ export const spotifyScopes = [
   "streaming",
   "user-read-email",
   "user-read-private",
+  "user-modify-playback-state",
 
   // show favourite button
   "user-library-read",
