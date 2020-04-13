@@ -1,5 +1,0 @@
-{
-    "env": {
-        "REACT_APP_SPOTIFY_REDIRECT": "@react-app-spotify-redirect"
-    }
-}
