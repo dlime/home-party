@@ -20,6 +20,8 @@ class ShowPlaylist extends Component {
     const songs = getSongs();
     const selectedSong = songs.length > 0 ? songs[0] : null;
     this.setState({ songs, selectedSong });
+
+    console.log("Redirect url", process.env.REACT_APP_SPOTIFY_REDIRECT);
   }
 
   handleDeleteButton = async (id) => {
