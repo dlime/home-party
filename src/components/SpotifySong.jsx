@@ -11,13 +11,14 @@ class SpotitySong extends Component {
     currentTrack: {
       name: "",
       artists: [{ name: "" }],
-      album: { images: [{}, {}, { url: "" }] },
+      album: { images: [{ url: "" }, { url: "" }, { url: "" }] },
     },
   };
 
   async componentDidMount() {
     await this.waitForSpotifyWebPlaybackSDKToLoad();
     await this.initializePlayer();
+    await this.getAlbumCover();
     // await this.setDevice();
   }
 
@@ -29,6 +30,40 @@ class SpotitySong extends Component {
 
     this.setState({ webPlaybackSdk });
   }
+
+  getAlbumCover = async () => {
+    if (!this.state.webPlaybackSdk) {
+      return;
+    }
+
+    const {
+      _options: { getOAuthToken },
+    } = this.state.webPlaybackSdk;
+
+    const { songId } = this.props;
+
+    getOAuthToken(async (access_token) => {
+      try {
+        const response = await fetch(
+          `https://api.spotify.com/v1/tracks/${songId}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${access_token}`,
+            },
+          }
+        );
+        if (!response.ok) {
+          throw Error("Error while getting track info", response.statusText);
+        }
+        const currentTrack = await response.json();
+        this.setState({ currentTrack });
+      } catch (error) {
+        console.log(error);
+      }
+    });
+  };
 
   waitForSpotifyWebPlaybackSDKToLoad = async () => {
     return new Promise((resolve) => {
@@ -46,6 +81,11 @@ class SpotitySong extends Component {
   };
 
   initializePlayer = async () => {
+    if (this.state.webPlaybackSdk) {
+      console.log("Web Playback already initialized.");
+      return;
+    }
+
     const { token } = this.props;
     const webPlaybackSdk = new window.Spotify.Player({
       name: "Web Playback SDK",
@@ -138,7 +178,6 @@ class SpotitySong extends Component {
 
   async componentDidUpdate(prevProps) {
     if (!this.state.isReady) {
-      console.log("componentDidUpdate player not ready.");
       return;
     }
 
@@ -162,15 +201,24 @@ class SpotitySong extends Component {
     // (e.g. user clicks when song is not ready)
   }
 
+  getAlbumCoverUrl = (currentTrack) => {
+    const albumCoverImage = currentTrack.album.images.find(
+      (image) => image.height > 500
+    );
+    return albumCoverImage ? albumCoverImage.url : "";
+  };
+
   render() {
     const { currentTrack, playerState } = this.state;
     const { isPlaying } = this.props;
+
+    const albumCoverUrl = this.getAlbumCoverUrl(currentTrack);
     return (
       <React.Fragment>
         <div
           className="spotify-wrapper"
           style={{
-            backgroundImage: `url(${this.state.currentTrack.album.images[2].url})`,
+            backgroundImage: `url(${albumCoverUrl})`,
           }}
         >
           {printDebug && (

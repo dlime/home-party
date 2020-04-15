@@ -118,7 +118,12 @@ class Player extends Component {
             </div>
           )}
           {host === "Spotify" && token && (
-            <SpotitySong token={token} url={url} isPlaying={isPlaying} />
+            <SpotitySong
+              token={token}
+              url={url}
+              songId={id}
+              isPlaying={isPlaying}
+            />
           )}
         </div>
       </React.Fragment>
