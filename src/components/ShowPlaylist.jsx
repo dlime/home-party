@@ -5,7 +5,6 @@ import { getSongs } from "../services/fakePlaylistService";
 import _ from "lodash";
 import Player from "./Player";
 import PlayerControls from "./PlayerControls";
-import { spotifyRedirectUri } from "../config";
 
 class ShowPlaylist extends Component {
   state = {
@@ -13,17 +12,24 @@ class ShowPlaylist extends Component {
     sortColumn: { path: "name", order: "asc" },
 
     songs: [],
-    selectedSong: { host_id: "", host: "" },
+    selectedSong: { hostId: "", host: "" },
     isPlaying: false,
   };
+
+  // setStateWithSessionStorage = (sessionStorageKey) => {
+  //   const [value, setValue] = React.useState(
+  //     sessionStorage.getItem(sessionStorageKey) || ""
+  //   );
+  //   React.useEffect(() => {
+  //     sessionStorage.setItem(sessionStorageKey, value);
+  //   }, [value]);
+  //   return [value, setValue];
+  // };
 
   componentDidMount() {
     const songs = getSongs();
     const selectedSong = songs.length > 0 ? songs[0] : null;
     this.setState({ songs, selectedSong });
-
-    console.log("Redirect url", process.env.REACT_APP_SPOTIFY_REDIRECT);
-    console.log("spotifyRedirectUri", spotifyRedirectUri);
   }
 
   handleDeleteButton = async (id) => {
@@ -94,8 +100,7 @@ class ShowPlaylist extends Component {
           <div className="row">
             <div className="col">
               <Player
-                id={selectedSong.host_id}
-                host={selectedSong.host}
+                selectedSong={selectedSong}
                 isPlaying={isPlaying}
                 onPlay={this.handlePlayerOnPlay}
                 onPause={this.handlePlayerOnPause}

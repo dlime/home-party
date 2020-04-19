@@ -34,14 +34,14 @@ const spotifyUrlPrefix = "spotify:track:";
 
 class Player extends Component {
   state = {
-    token: null,
+    spotifyToken: null,
   };
 
   componentDidMount() {
-    const token = getSpotifyTokenFromHash(window.location.hash);
-    if (token) {
+    const spotifyToken = getSpotifyTokenFromHash(window.location.hash);
+    if (spotifyToken) {
       // TODO: store token into session + check if expired
-      this.setState({ token });
+      this.setState({ spotifyToken });
     }
   }
 
@@ -67,9 +67,10 @@ class Player extends Component {
   };
 
   render() {
-    const { id, host, isPlaying, onPlay, onPause } = this.props;
-    const { token } = this.state;
-    const url = this.getUrl(id, host);
+    const { selectedSong, isPlaying, onPlay, onPause } = this.props;
+    const { hostId, host } = selectedSong;
+    const { spotifyToken } = this.state;
+    const url = this.getUrl(hostId, host);
     return (
       <React.Fragment>
         <Script
@@ -99,12 +100,12 @@ class Player extends Component {
           )}
 
           {/* TODO: Extract into a unique Spotify component */}
-          {host === "Spotify" && !token && <SpotifyLogin />}
-          {host === "Spotify" && token && (
+          {host === "Spotify" && !spotifyToken && <SpotifyLogin />}
+          {host === "Spotify" && spotifyToken && (
             <SpotitySong
-              token={token}
+              token={spotifyToken}
               url={url}
-              songId={id}
+              songId={hostId}
               isPlaying={isPlaying}
             />
           )}
@@ -115,8 +116,7 @@ class Player extends Component {
 }
 
 Player.propTypes = {
-  id: PropTypes.string.isRequired,
-  host: PropTypes.string.isRequired,
+  selectedSong: PropTypes.object.isRequired,
   isPlaying: PropTypes.bool.isRequired,
   onPlay: PropTypes.func.isRequired,
   onPause: PropTypes.func.isRequired,
