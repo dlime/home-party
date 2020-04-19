@@ -2,9 +2,8 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import ReactPlayer from "react-player";
 import Script from "react-load-script";
-import SpotitySong from "./SpotifySong";
 import { getSpotifyTokenFromHash } from "../config.js";
-import SpotifyLogin from "./SpotifyLogin";
+import SpotifyPlayer from "./SpotifyPlayer";
 
 // TODO: move these constants in a config file
 const youtubeUrlPrefix = "https://www.youtube.com/watch?v=";
@@ -98,11 +97,8 @@ class Player extends Component {
               onPause={onPause}
             />
           )}
-
-          {/* TODO: Extract into a unique Spotify component */}
-          {host === "Spotify" && !spotifyToken && <SpotifyLogin />}
-          {host === "Spotify" && spotifyToken && (
-            <SpotitySong
+          {host === "Spotify" && (
+            <SpotifyPlayer
               token={spotifyToken}
               url={url}
               songId={hostId}
