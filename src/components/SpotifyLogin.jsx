@@ -7,14 +7,27 @@ import {
   spotifyRedirectUri,
 } from "../config.js";
 
-const SpotifyLogin = () => {
+const getAuthorizationUrl = () => {
+  return (
+    `${spotifyAuthEndpoint}` +
+    `?client_id=${spotifyClientId}` +
+    `&redirect_uri=${spotifyRedirectUri}` +
+    `&scope=${spotifyScopes}` +
+    `&response_type=token`
+  );
+};
+
+const handleClick = (selectedSong) => {
+  localStorage.setItem("selectedSong", JSON.stringify(selectedSong));
+};
+
+const SpotifyLogin = ({ selectedSong }) => {
   return (
     <div className="login-wrapper">
       <a
         className="spotifybtn"
-        href={`${spotifyAuthEndpoint}?client_id=${spotifyClientId}&redirect_uri=${spotifyRedirectUri}&scope=${spotifyScopes.join(
-          "%20"
-        )}&response_type=token&show_dialog=true`}
+        href={getAuthorizationUrl()}
+        onClick={() => handleClick(selectedSong)}
       >
         Login to Spotify
       </a>

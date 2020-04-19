@@ -16,19 +16,26 @@ class ShowPlaylist extends Component {
     isPlaying: false,
   };
 
-  // setStateWithSessionStorage = (sessionStorageKey) => {
-  //   const [value, setValue] = React.useState(
-  //     sessionStorage.getItem(sessionStorageKey) || ""
-  //   );
-  //   React.useEffect(() => {
-  //     sessionStorage.setItem(sessionStorageKey, value);
-  //   }, [value]);
-  //   return [value, setValue];
-  // };
+  getSelectedSong = (songs) => {
+    const selectedSong = this.songFromSpotifyRedirect();
+    if (selectedSong) {
+      return selectedSong;
+    }
+
+    return songs.length > 0 ? songs[0] : null;
+  };
+
+  songFromSpotifyRedirect = () => {
+    const selectedSong = JSON.parse(localStorage.getItem("selectedSong"));
+    if (selectedSong) {
+      localStorage.removeItem("selectedSong");
+    }
+    return selectedSong;
+  };
 
   componentDidMount() {
     const songs = getSongs();
-    const selectedSong = songs.length > 0 ? songs[0] : null;
+    const selectedSong = this.getSelectedSong(songs);
     this.setState({ songs, selectedSong });
   }
 

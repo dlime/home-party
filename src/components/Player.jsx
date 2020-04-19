@@ -5,7 +5,7 @@ import Script from "react-load-script";
 import { getSpotifyTokenFromHash } from "../config.js";
 import SpotifyPlayer from "./SpotifyPlayer";
 
-// TODO: move these constants in a config file
+// TODO: move these constants in a config file + comment values
 const youtubeUrlPrefix = "https://www.youtube.com/watch?v=";
 const youtubeConfig = {
   controls: 0,
@@ -101,7 +101,7 @@ class Player extends Component {
             <SpotifyPlayer
               token={spotifyToken}
               url={url}
-              songId={hostId}
+              selectedSong={selectedSong}
               isPlaying={isPlaying}
             />
           )}
