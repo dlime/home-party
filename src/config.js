@@ -14,7 +14,7 @@ export const spotifyScopes = [
   // show favourite button
   "user-library-read",
   "user-library-modify",
-];
+].join("%20");
 
 export const getSpotifyTokenFromHash = () => {
   if (!window.location.hash) {

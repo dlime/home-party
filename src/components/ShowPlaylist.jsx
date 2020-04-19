@@ -5,7 +5,6 @@ import { getSongs } from "../services/fakePlaylistService";
 import _ from "lodash";
 import Player from "./Player";
 import PlayerControls from "./PlayerControls";
-import { spotifyRedirectUri } from "../config";
 
 class ShowPlaylist extends Component {
   state = {
@@ -13,17 +12,37 @@ class ShowPlaylist extends Component {
     sortColumn: { path: "name", order: "asc" },
 
     songs: [],
-    selectedSong: { host_id: "", host: "" },
+    selectedSong: { hostId: "", host: "" },
     isPlaying: false,
+  };
+
+  getSelectedSong = (songs) => {
+    const selectedSong = this.readAndRemoveFromLocalStorage("selectedSong");
+    if (selectedSong) {
+      return selectedSong;
+    }
+
+    return songs.length > 0 ? songs[0] : null;
+  };
+
+  getIsPlaying = () => {
+    return this.readAndRemoveFromLocalStorage("isPlaying");
+  };
+
+  readAndRemoveFromLocalStorage = (key) => {
+    const selectedSong = JSON.parse(localStorage.getItem(key));
+    if (selectedSong) {
+      localStorage.removeItem(key);
+    }
+    return selectedSong;
   };
 
   componentDidMount() {
     const songs = getSongs();
-    const selectedSong = songs.length > 0 ? songs[0] : null;
-    this.setState({ songs, selectedSong });
-
-    console.log("Redirect url", process.env.REACT_APP_SPOTIFY_REDIRECT);
-    console.log("spotifyRedirectUri", spotifyRedirectUri);
+    // Manage a possibly redirect from Spotify login
+    const selectedSong = this.getSelectedSong(songs);
+    const isPlaying = this.getIsPlaying();
+    this.setState({ songs, selectedSong, isPlaying });
   }
 
   handleDeleteButton = async (id) => {
@@ -94,8 +113,7 @@ class ShowPlaylist extends Component {
           <div className="row">
             <div className="col">
               <Player
-                id={selectedSong.host_id}
-                host={selectedSong.host}
+                selectedSong={selectedSong}
                 isPlaying={isPlaying}
                 onPlay={this.handlePlayerOnPlay}
                 onPause={this.handlePlayerOnPause}
