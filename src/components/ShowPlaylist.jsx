@@ -17,7 +17,7 @@ class ShowPlaylist extends Component {
   };
 
   getSelectedSong = (songs) => {
-    const selectedSong = this.songFromSpotifyRedirect();
+    const selectedSong = this.readAndRemoveFromLocalStorage("selectedSong");
     if (selectedSong) {
       return selectedSong;
     }
@@ -25,18 +25,24 @@ class ShowPlaylist extends Component {
     return songs.length > 0 ? songs[0] : null;
   };
 
-  songFromSpotifyRedirect = () => {
-    const selectedSong = JSON.parse(localStorage.getItem("selectedSong"));
+  getIsPlaying = () => {
+    return this.readAndRemoveFromLocalStorage("isPlaying");
+  };
+
+  readAndRemoveFromLocalStorage = (key) => {
+    const selectedSong = JSON.parse(localStorage.getItem(key));
     if (selectedSong) {
-      localStorage.removeItem("selectedSong");
+      localStorage.removeItem(key);
     }
     return selectedSong;
   };
 
   componentDidMount() {
     const songs = getSongs();
+    // Manage a possibly redirect from Spotify login
     const selectedSong = this.getSelectedSong(songs);
-    this.setState({ songs, selectedSong });
+    const isPlaying = this.getIsPlaying();
+    this.setState({ songs, selectedSong, isPlaying });
   }
 
   handleDeleteButton = async (id) => {

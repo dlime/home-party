@@ -3,10 +3,19 @@ import SpotifyLogin from "./SpotifyLogin";
 import SpotitySong from "./SpotifySong";
 import PropTypes from "prop-types";
 
+const handleLoginClick = (selectedSong, isPlaying) => {
+  localStorage.setItem("selectedSong", JSON.stringify(selectedSong));
+  localStorage.setItem("isPlaying", JSON.stringify(isPlaying));
+};
+
 const SpotifyPlayer = ({ token, url, selectedSong, isPlaying }) => {
   return (
     <React.Fragment>
-      {!token && <SpotifyLogin selectedSong={selectedSong} />}
+      {!token && (
+        <SpotifyLogin
+          handleLoginClick={() => handleLoginClick(selectedSong, isPlaying)}
+        />
+      )}
       {token && (
         <SpotitySong
           token={token}

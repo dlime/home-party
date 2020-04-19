@@ -17,17 +17,13 @@ const getAuthorizationUrl = () => {
   );
 };
 
-const handleClick = (selectedSong) => {
-  localStorage.setItem("selectedSong", JSON.stringify(selectedSong));
-};
-
-const SpotifyLogin = ({ selectedSong }) => {
+const SpotifyLogin = ({ handleLoginClick }) => {
   return (
     <div className="login-wrapper">
       <a
         className="spotifybtn"
         href={getAuthorizationUrl()}
-        onClick={() => handleClick(selectedSong)}
+        onClick={handleLoginClick}
       >
         Login to Spotify
       </a>
