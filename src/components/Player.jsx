@@ -3,13 +3,8 @@ import PropTypes from "prop-types";
 import ReactPlayer from "react-player";
 import Script from "react-load-script";
 import SpotitySong from "./SpotifySong";
-import {
-  spotifyAuthEndpoint,
-  spotifyClientId,
-  spotifyScopes,
-  spotifyRedirectUri,
-  getSpotifyTokenFromHash,
-} from "../config.js";
+import { getSpotifyTokenFromHash } from "../config.js";
+import SpotifyLogin from "./SpotifyLogin";
 
 // TODO: move these constants in a config file
 const youtubeUrlPrefix = "https://www.youtube.com/watch?v=";
@@ -104,19 +99,7 @@ class Player extends Component {
           )}
 
           {/* TODO: Extract into a unique Spotify component */}
-          {host === "Spotify" && !token && (
-            // TODO: extract this as SpotifyLogin component
-            <div className="login-wrapper">
-              <a
-                className="spotifybtn"
-                href={`${spotifyAuthEndpoint}?client_id=${spotifyClientId}&redirect_uri=${spotifyRedirectUri}&scope=${spotifyScopes.join(
-                  "%20"
-                )}&response_type=token&show_dialog=true`}
-              >
-                Login to Spotify
-              </a>
-            </div>
-          )}
+          {host === "Spotify" && !token && <SpotifyLogin />}
           {host === "Spotify" && token && (
             <SpotitySong
               token={token}
