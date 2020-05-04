@@ -31,11 +31,13 @@ class ShowPlaylist extends Component {
   };
 
   readAndRemoveFromLocalStorage = (key) => {
-    const selectedSong = JSON.parse(localStorage.getItem(key));
-    if (selectedSong) {
-      localStorage.removeItem(key);
+    const storageValue = localStorage.getItem(key);
+    if (!storageValue) {
+      return null;
     }
-    return selectedSong;
+
+    localStorage.removeItem(key);
+    return JSON.parse(storageValue);
   };
 
   componentDidMount() {
