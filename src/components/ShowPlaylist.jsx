@@ -26,7 +26,8 @@ class ShowPlaylist extends Component {
   };
 
   getIsPlaying = () => {
-    return this.readAndRemoveFromLocalStorage("isPlaying");
+    const isPlaying = this.readAndRemoveFromLocalStorage("isPlaying");
+    return isPlaying ? true : false;
   };
 
   readAndRemoveFromLocalStorage = (key) => {
