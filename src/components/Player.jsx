@@ -32,16 +32,8 @@ const soundcloudConfig = {
 const spotifyUrlPrefix = "spotify:track:";
 
 class Player extends Component {
-  state = {
-    spotifyToken: null,
-  };
-
   componentDidMount() {
-    const spotifyToken = getSpotifyTokenFromHash(window.location.hash);
-    if (spotifyToken) {
-      // TODO: store token into session + check if expired
-      this.setState({ spotifyToken });
-    }
+    getSpotifyTokenFromHash();
   }
 
   handleScriptCreate = () => {
@@ -68,7 +60,6 @@ class Player extends Component {
   render() {
     const { selectedSong, isPlaying, onPlay, onPause } = this.props;
     const { hostId, host } = selectedSong;
-    const { spotifyToken } = this.state;
     const url = this.getUrl(hostId, host);
     return (
       <React.Fragment>
@@ -99,7 +90,6 @@ class Player extends Component {
           )}
           {host === "Spotify" && (
             <SpotifyPlayer
-              token={spotifyToken}
               url={url}
               selectedSong={selectedSong}
               isPlaying={isPlaying}

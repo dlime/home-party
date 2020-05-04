@@ -25,10 +25,8 @@ class SpotitySong extends Component {
   async componentWillUnmount() {
     let webPlaybackSdk = this.state.webPlaybackSdk;
     if (webPlaybackSdk) {
-      await webPlaybackSdk.disconnect();
+      webPlaybackSdk.disconnect();
     }
-
-    this.setState({ webPlaybackSdk });
   }
 
   getAlbumCover = async () => {
