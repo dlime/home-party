@@ -2,29 +2,11 @@ import React from "react";
 import SpotifyLogin from "./SpotifyLogin";
 import SpotitySong from "./SpotifySong";
 import PropTypes from "prop-types";
-import moment from "moment";
-import spotifyService from "../../services/spotifyService";
+import { getToken } from "./Utils";
 
 const handleLoginClick = (selectedSong, isPlaying) => {
   localStorage.setItem("selectedSong", JSON.stringify(selectedSong));
   localStorage.setItem("isPlaying", JSON.stringify(isPlaying));
-};
-
-const getToken = () => {
-  const token = localStorage.getItem("spotifyToken");
-  const expiration = JSON.parse(
-    localStorage.getItem("spotifyTokenExpireDatetime")
-  );
-  if (!token || !expiration) {
-    return null;
-  }
-
-  if (moment().isSameOrAfter(expiration)) {
-    return null;
-  }
-
-  spotifyService.setToken(token);
-  return token;
 };
 
 const SpotifyPlayer = ({ url, selectedSong, isPlaying, onPlayClick }) => {
