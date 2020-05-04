@@ -2,8 +2,8 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import ReactPlayer from "react-player";
 import Script from "react-load-script";
-import { getSpotifyTokenFromHash } from "../config.js";
-import SpotifyPlayer from "./SpotifyPlayer";
+import { getSpotifyTokenFromHash } from "./spotify/Utils.js";
+import SpotifyPlayer from "./spotify/SpotifyPlayer";
 
 // TODO: move these constants in a config file + comment values
 const youtubeUrlPrefix = "https://www.youtube.com/watch?v=";

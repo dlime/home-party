@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
+import spotifyService from "../../services/spotifyService";
 
 const printDebug = false;
 
@@ -20,7 +21,6 @@ class SpotitySong extends Component {
     await this.waitForSpotifyWebPlaybackSDKToLoad();
     await this.initializePlayer();
     await this.getAlbumCover();
-    // await this.setDevice();
   }
 
   async componentWillUnmount() {
@@ -31,37 +31,13 @@ class SpotitySong extends Component {
   }
 
   getAlbumCover = async () => {
-    if (!this.state.webPlaybackSdk) {
-      return;
-    }
-
-    const {
-      _options: { getOAuthToken },
-    } = this.state.webPlaybackSdk;
-
     const { songId } = this.props;
-
-    getOAuthToken(async (access_token) => {
-      try {
-        const response = await fetch(
-          `https://api.spotify.com/v1/tracks/${songId}`,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${access_token}`,
-            },
-          }
-        );
-        if (!response.ok) {
-          throw Error("Error while getting track info", response.statusText);
-        }
-        const currentTrack = await response.json();
-        this.setState({ currentTrack });
-      } catch (error) {
-        console.log(error);
-      }
-    });
+    try {
+      const response = await spotifyService.get(`tracks/${songId}`);
+      this.setState({ currentTrack: response.data });
+    } catch (error) {
+      console.log("Error while getting Album cover");
+    }
   };
 
   waitForSpotifyWebPlaybackSDKToLoad = async () => {
@@ -139,39 +115,13 @@ class SpotitySong extends Component {
     this.setState({ webPlaybackSdk });
   };
 
-  setDevice = async () => {
-    const {
-      _options: { getOAuthToken, id },
-    } = this.state.webPlaybackSdk;
-
-    getOAuthToken((access_token) => {
-      fetch(`https://api.spotify.com/v1/me/player`, {
-        method: "PUT",
-        body: JSON.stringify({ device_ids: [id], play: true }),
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${access_token}`,
-        },
-      });
-    });
-  };
-
   play = (spotifyUri) => {
     const {
-      _options: { getOAuthToken, id },
+      _options: { id },
     } = this.state.webPlaybackSdk;
 
-    getOAuthToken((access_token) => {
-      fetch(`https://api.spotify.com/v1/me/player/play?device_id=${id}`, {
-        method: "PUT",
-        body: JSON.stringify({
-          uris: [spotifyUri],
-        }),
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${access_token}`,
-        },
-      });
+    spotifyService.put(`me/player/play?device_id=${id}`, {
+      uris: [spotifyUri],
     });
   };
 

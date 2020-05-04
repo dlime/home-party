@@ -1,12 +1,10 @@
-// TODO: rename it as SpotifyConfig and remove all spotify suffixes from var/func names
-// - extract API player endpoint as named var
-
 import moment from "moment";
+import spotifyService from "../../services/spotifyService";
 
-export const spotifyAuthEndpoint = "https://accounts.spotify.com/authorize";
-export const spotifyClientId = "7bc3c9bdb4044375bb470a662b6ae874";
-export const spotifyRedirectUri = process.env.REACT_APP_SPOTIFY_REDIRECT;
-export const spotifyScopes = [
+export const authorizationEndpoint = "https://accounts.spotify.com/authorize";
+export const clientId = "7bc3c9bdb4044375bb470a662b6ae874";
+export const redirectUri = process.env.REACT_APP_SPOTIFY_REDIRECT;
+export const tokenScopes = [
   // for spotify web player SDK
   "streaming",
   "user-read-email",
@@ -40,6 +38,7 @@ export const getSpotifyTokenFromHash = () => {
     JSON.stringify(expirationDatetime)
   );
   localStorage.setItem("spotifyToken", hash.access_token);
+  spotifyService.setToken(hash.access_token);
 
   window.location.hash = "";
 };

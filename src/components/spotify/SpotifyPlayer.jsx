@@ -3,6 +3,7 @@ import SpotifyLogin from "./SpotifyLogin";
 import SpotitySong from "./SpotifySong";
 import PropTypes from "prop-types";
 import moment from "moment";
+import spotifyService from "../../services/spotifyService";
 
 const handleLoginClick = (selectedSong, isPlaying) => {
   localStorage.setItem("selectedSong", JSON.stringify(selectedSong));
@@ -22,6 +23,7 @@ const getToken = () => {
     return null;
   }
 
+  spotifyService.setToken(token);
   return token;
 };
 

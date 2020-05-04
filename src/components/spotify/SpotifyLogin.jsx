@@ -1,18 +1,18 @@
 import React from "react";
 
 import {
-  spotifyAuthEndpoint,
-  spotifyClientId,
-  spotifyScopes,
-  spotifyRedirectUri,
-} from "../config.js";
+  authorizationEndpoint,
+  clientId,
+  tokenScopes,
+  redirectUri,
+} from "./Utils.js";
 
 const getAuthorizationUrl = () => {
   return (
-    `${spotifyAuthEndpoint}` +
-    `?client_id=${spotifyClientId}` +
-    `&redirect_uri=${spotifyRedirectUri}` +
-    `&scope=${spotifyScopes}` +
+    `${authorizationEndpoint}` +
+    `?client_id=${clientId}` +
+    `&redirect_uri=${redirectUri}` +
+    `&scope=${tokenScopes}` +
     `&response_type=token`
   );
 };
