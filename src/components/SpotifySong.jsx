@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import PropTypes from "prop-types";
 
 const printDebug = false;
 
@@ -208,7 +209,7 @@ class SpotitySong extends Component {
 
   render() {
     const { currentTrack, playerState } = this.state;
-    const { isPlaying } = this.props;
+    const { isPlaying, onPlayClick } = this.props;
 
     const albumCoverUrl = this.getAlbumCoverUrl(currentTrack);
     return (
@@ -217,7 +218,9 @@ class SpotitySong extends Component {
           className="spotify-wrapper"
           style={{
             backgroundImage: `url(${albumCoverUrl})`,
+            cursor: "pointer",
           }}
+          onClick={onPlayClick}
         >
           {printDebug && (
             <div>
@@ -241,5 +244,13 @@ class SpotitySong extends Component {
     );
   }
 }
+
+SpotitySong.propTypes = {
+  token: PropTypes.string.isRequired,
+  url: PropTypes.string.isRequired,
+  songId: PropTypes.string.isRequired,
+  isPlaying: PropTypes.bool.isRequired,
+  onPlayClick: PropTypes.func.isRequired,
+};
 
 export default SpotitySong;

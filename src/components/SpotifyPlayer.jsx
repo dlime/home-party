@@ -11,7 +11,9 @@ const handleLoginClick = (selectedSong, isPlaying) => {
 
 const getToken = () => {
   const token = localStorage.getItem("spotifyToken");
-  const expiration = localStorage.getItem("spotifyTokenExpireDatetime");
+  const expiration = JSON.parse(
+    localStorage.getItem("spotifyTokenExpireDatetime")
+  );
   if (!token || !expiration) {
     return null;
   }
@@ -23,7 +25,7 @@ const getToken = () => {
   return token;
 };
 
-const SpotifyPlayer = ({ url, selectedSong, isPlaying }) => {
+const SpotifyPlayer = ({ url, selectedSong, isPlaying, onPlayClick }) => {
   const token = getToken();
   return (
     <React.Fragment>
@@ -38,6 +40,7 @@ const SpotifyPlayer = ({ url, selectedSong, isPlaying }) => {
           url={url}
           songId={selectedSong.hostId}
           isPlaying={isPlaying}
+          onPlayClick={onPlayClick}
         />
       )}
     </React.Fragment>
@@ -48,6 +51,7 @@ SpotifyPlayer.propTypes = {
   url: PropTypes.string.isRequired,
   selectedSong: PropTypes.object.isRequired,
   isPlaying: PropTypes.bool.isRequired,
+  onPlayClick: PropTypes.func.isRequired,
 };
 
 export default SpotifyPlayer;

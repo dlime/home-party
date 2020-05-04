@@ -35,7 +35,10 @@ export const getSpotifyTokenFromHash = () => {
     }, {});
 
   const expirationDatetime = moment().add(hash.expires_in, "seconds");
-  localStorage.setItem("spotifyTokenExpireDatetime", expirationDatetime);
+  localStorage.setItem(
+    "spotifyTokenExpireDatetime",
+    JSON.stringify(expirationDatetime)
+  );
   localStorage.setItem("spotifyToken", hash.access_token);
 
   window.location.hash = "";

@@ -120,6 +120,7 @@ class ShowPlaylist extends Component {
                 isPlaying={isPlaying}
                 onPlay={this.handlePlayerOnPlay}
                 onPause={this.handlePlayerOnPause}
+                onPlayClick={this.handlePlayButtonClick}
               />
             </div>
 

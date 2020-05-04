@@ -58,7 +58,13 @@ class Player extends Component {
   };
 
   render() {
-    const { selectedSong, isPlaying, onPlay, onPause } = this.props;
+    const {
+      selectedSong,
+      isPlaying,
+      onPlay,
+      onPause,
+      onPlayClick,
+    } = this.props;
     const { hostId, host } = selectedSong;
     const url = this.getUrl(hostId, host);
     return (
@@ -93,6 +99,7 @@ class Player extends Component {
               url={url}
               selectedSong={selectedSong}
               isPlaying={isPlaying}
+              onPlayClick={onPlayClick}
             />
           )}
         </div>
@@ -106,6 +113,7 @@ Player.propTypes = {
   isPlaying: PropTypes.bool.isRequired,
   onPlay: PropTypes.func.isRequired,
   onPause: PropTypes.func.isRequired,
+  onPlayClick: PropTypes.func.isRequired,
 };
 
 export default Player;
