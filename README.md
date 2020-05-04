@@ -3,8 +3,11 @@
 🏠🎉🎵
 Play songs from most famous music streaming websites all in one place!
 
+## Hosted on
+[home-party.online](https://home-party.online)
 
-## How to run
+
+## How to run locally
 
 Install dependencies
 `npm install`
