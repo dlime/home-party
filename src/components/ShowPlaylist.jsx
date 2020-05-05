@@ -18,11 +18,11 @@ class ShowPlaylist extends Component {
 
   getSelectedSongBeforeLogin = (songs) => {
     const selectedSong = this.readAndRemoveFromLocalStorage("selectedSong");
-    if (selectedSong) {
-      return selectedSong;
+    if (!selectedSong || !selectedSong._id) {
+      return songs.length > 0 ? songs[0] : null;
     }
 
-    return songs.length > 0 ? songs[0] : null;
+    return songs.find((song) => song._id === selectedSong._id);
   };
 
   getIsPlaying = () => {
@@ -82,6 +82,7 @@ class ShowPlaylist extends Component {
     const index = sortedSong.indexOf(selectedSong);
     if (index < 0) {
       console.error("Previous song click: current song not found");
+      return;
     }
     const previousIndex = index == 0 ? 0 : index - 1;
     this.setState({ selectedSong: sortedSong[previousIndex] });
@@ -93,6 +94,7 @@ class ShowPlaylist extends Component {
     const index = sortedSong.indexOf(selectedSong);
     if (index < 0) {
       console.error("Next song click: current song not found");
+      return;
     }
     const nextIndex = index == sortedSong.length - 1 ? index : index + 1;
     this.setState({ selectedSong: sortedSong[nextIndex] });
