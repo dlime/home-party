@@ -14,15 +14,18 @@ const createKey = (item, column, dataKey) => {
   return item[dataKey] + (column.path || column.label);
 };
 
+const rowClass = (song, selectedSong) => {
+  return "cursor-pointer" + (song == selectedSong ? " table-active" : "");
+};
+
 const TableBody = ({ selectedSong, data, dataKey, columns, onSongClick }) => {
   return (
     <tbody>
       {data.map((song) => (
         <tr
           key={song[dataKey]}
-          style={{ cursor: "pointer" }}
           onClick={() => onSongClick(song)}
-          className={song == selectedSong && "table-active"}
+          className={rowClass(song, selectedSong)}
         >
           {columns.map((column) => (
             <td key={createKey(song, column)}>{renderCell(song, column)}</td>

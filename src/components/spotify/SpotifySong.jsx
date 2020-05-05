@@ -165,10 +165,9 @@ class SpotitySong extends Component {
     return (
       <React.Fragment>
         <div
-          className="spotify-wrapper"
+          className="spotify-wrapper cursor-pointer"
           style={{
             backgroundImage: `url(${albumCoverUrl})`,
-            cursor: "pointer",
           }}
           onClick={onPlayClick}
         >
