@@ -76,6 +76,28 @@ class ShowPlaylist extends Component {
     this.setState({ isPlaying });
   };
 
+  handlePreviousButtonClick = () => {
+    const { selectedSong } = this.state;
+    const sortedSong = this.getSortedSongs();
+    const index = sortedSong.indexOf(selectedSong);
+    if (index < 0) {
+      console.error("Previous song click: current song not found");
+    }
+    const previousIndex = index == 0 ? 0 : index - 1;
+    this.setState({ selectedSong: sortedSong[previousIndex] });
+  };
+
+  handleNextButtonClick = () => {
+    const { selectedSong } = this.state;
+    const sortedSong = this.getSortedSongs();
+    const index = sortedSong.indexOf(selectedSong);
+    if (index < 0) {
+      console.error("Next song click: current song not found");
+    }
+    const nextIndex = index == sortedSong.length - 1 ? index : index + 1;
+    this.setState({ selectedSong: sortedSong[nextIndex] });
+  };
+
   // Note: callback for external player play/pause
   handlePlayerOnPlay = () => {
     this.setState({ isPlaying: true });
@@ -140,6 +162,8 @@ class ShowPlaylist extends Component {
         <PlayerControls
           isPlaying={isPlaying}
           onPlayClick={this.handlePlayButtonClick}
+          onPreviousClick={this.handlePreviousButtonClick}
+          onNextClick={this.handleNextButtonClick}
         />
       </React.Fragment>
     );
