@@ -26,10 +26,11 @@ class SongsTable extends Component {
   ];
 
   render() {
-    const { data, onSort, onSongClick, sortColumn } = this.props;
+    const { data, onSort, onSongClick, sortColumn, selectedSong } = this.props;
 
     return (
       <Table
+        selectedSong={selectedSong}
         data={data}
         columns={this.columns}
         sortColumn={sortColumn}
@@ -45,6 +46,7 @@ SongsTable.propTypes = {
   onDelete: PropTypes.func.isRequired,
   onSort: PropTypes.func.isRequired,
   sortColumn: PropTypes.object.isRequired,
+  selectedSong: PropTypes.object.isRequired,
 };
 
 export default SongsTable;

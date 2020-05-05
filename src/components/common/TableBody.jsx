@@ -14,7 +14,7 @@ const createKey = (item, column, dataKey) => {
   return item[dataKey] + (column.path || column.label);
 };
 
-const TableBody = ({ data, dataKey, columns, onSongClick }) => {
+const TableBody = ({ selectedSong, data, dataKey, columns, onSongClick }) => {
   return (
     <tbody>
       {data.map((song) => (
@@ -22,6 +22,7 @@ const TableBody = ({ data, dataKey, columns, onSongClick }) => {
           key={song[dataKey]}
           style={{ cursor: "pointer" }}
           onClick={() => onSongClick(song)}
+          className={song == selectedSong && "table-active"}
         >
           {columns.map((column) => (
             <td key={createKey(song, column)}>{renderCell(song, column)}</td>
@@ -41,6 +42,7 @@ TableBody.propTypes = {
   data: PropTypes.array.isRequired, // todo: check array elements structure
   columns: PropTypes.array.isRequired, // todo: check array elements structure
   onSongClick: PropTypes.func.isRequired,
+  selectedSong: PropTypes.object.isRequired,
 };
 
 export default TableBody;

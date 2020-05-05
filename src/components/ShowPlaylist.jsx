@@ -16,7 +16,7 @@ class ShowPlaylist extends Component {
     isPlaying: false,
   };
 
-  getSelectedSong = (songs) => {
+  getSelectedSongBeforeLogin = (songs) => {
     const selectedSong = this.readAndRemoveFromLocalStorage("selectedSong");
     if (selectedSong) {
       return selectedSong;
@@ -43,7 +43,7 @@ class ShowPlaylist extends Component {
   componentDidMount() {
     const songs = getSongs();
     // Manage a possibly redirect from Spotify login
-    const selectedSong = this.getSelectedSong(songs);
+    const selectedSong = this.getSelectedSongBeforeLogin(songs);
     const isPlaying = this.getIsPlaying();
     this.setState({ songs, selectedSong, isPlaying });
   }
@@ -129,6 +129,7 @@ class ShowPlaylist extends Component {
               <SongsTable
                 data={data}
                 sortColumn={sortColumn}
+                selectedSong={selectedSong}
                 onSongClick={this.handleSongClick}
                 onDelete={this.handleDeleteButton}
                 onSort={this.handleSortClick}
