@@ -18,7 +18,11 @@ const TableBody = ({ data, dataKey, columns, onSongClick }) => {
   return (
     <tbody>
       {data.map((song) => (
-        <tr key={song[dataKey]} onClick={() => onSongClick(song)}>
+        <tr
+          key={song[dataKey]}
+          style={{ cursor: "pointer" }}
+          onClick={() => onSongClick(song)}
+        >
           {columns.map((column) => (
             <td key={createKey(song, column)}>{renderCell(song, column)}</td>
           ))}
