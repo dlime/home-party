@@ -14,13 +14,13 @@ const createKey = (item, column, dataKey) => {
   return item[dataKey] + (column.path || column.label);
 };
 
-const TableBody = ({ data, dataKey, columns }) => {
+const TableBody = ({ data, dataKey, columns, onSongClick }) => {
   return (
     <tbody>
-      {data.map(item => (
-        <tr key={item[dataKey]}>
-          {columns.map(column => (
-            <td key={createKey(item, column)}>{renderCell(item, column)}</td>
+      {data.map((song) => (
+        <tr key={song[dataKey]} onClick={() => onSongClick(song)}>
+          {columns.map((column) => (
+            <td key={createKey(song, column)}>{renderCell(song, column)}</td>
           ))}
         </tr>
       ))}
@@ -29,13 +29,14 @@ const TableBody = ({ data, dataKey, columns }) => {
 };
 
 TableBody.defaultProps = {
-  dataKey: "_id"
+  dataKey: "_id",
 };
 
 TableBody.propTypes = {
   dataKey: PropTypes.string.isRequired,
   data: PropTypes.array.isRequired, // todo: check array elements structure
-  columns: PropTypes.array.isRequired // todo: check array elements structure
+  columns: PropTypes.array.isRequired, // todo: check array elements structure
+  onSongClick: PropTypes.func.isRequired,
 };
 
 export default TableBody;

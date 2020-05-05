@@ -147,7 +147,7 @@ class SpotitySong extends Component {
       await this.state.webPlaybackSdk.pause();
     }
     // TODO: implement a mechanysm to 100% sync with play/pause button state
-    // (e.g. user clicks when song is not ready)
+    // (e.g. prevent user clicks when song is not ready)
   }
 
   getAlbumCoverUrl = (currentTrack) => {

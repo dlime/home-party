@@ -7,7 +7,7 @@ class SongsTable extends Component {
     {
       path: "name",
       label: "Name",
-      content: song => {
+      content: (song) => {
         return (
           <button
             className="btn bg-transparent"
@@ -16,35 +16,38 @@ class SongsTable extends Component {
             {song.name}
           </button>
         );
-      }
+      },
     },
     { path: "duration", label: "Duration" },
     { path: "host", label: "Site" },
     {
       path: "delete",
-      content: song => {
+      content: (song) => {
         return (
           <button
-            onClick={() => this.props.onDelete(song._id)}
+            onClick={(event) => {
+              this.props.onDelete(song._id);
+              event.stopPropagation();
+            }}
             className="btn btn-danger btn-s"
           >
             Delete
           </button>
         );
-      }
-    }
+      },
+    },
   ];
 
   render() {
-    const { data, onDelete, onSort, sortColumn } = this.props;
+    const { data, onSort, onSongClick, sortColumn } = this.props;
 
     return (
       <Table
         data={data}
         columns={this.columns}
         sortColumn={sortColumn}
-        onDelete={onDelete}
         onSort={onSort}
+        onSongClick={onSongClick}
       />
     );
   }
@@ -54,7 +57,7 @@ SongsTable.propTypes = {
   data: PropTypes.array.isRequired,
   onDelete: PropTypes.func.isRequired,
   onSort: PropTypes.func.isRequired,
-  sortColumn: PropTypes.object.isRequired
+  sortColumn: PropTypes.object.isRequired,
 };
 
 export default SongsTable;
