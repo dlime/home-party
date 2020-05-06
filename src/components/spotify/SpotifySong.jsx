@@ -16,18 +16,46 @@ class SpotitySong extends Component {
       album: { images: [{ url: "" }, { url: "" }, { url: "" }] },
     },
   };
+  _isMounted = false; // Used to prevent setStates in Spotify callbacks
 
   async componentDidMount() {
+    this._isMounted = true;
     await this.waitForSpotifyWebPlaybackSDKToLoad();
     await this.initializePlayer();
     await this.getAlbumCover();
   }
 
   async componentWillUnmount() {
+    this._isMounted = false;
     let webPlaybackSdk = this.state.webPlaybackSdk;
     if (webPlaybackSdk) {
-      webPlaybackSdk.disconnect();
+      await webPlaybackSdk.disconnect();
     }
+  }
+
+  async componentDidUpdate(prevProps) {
+    if (!this.state.isReady) {
+      return;
+    }
+
+    const { url, isPlaying } = this.props;
+    const { firstTimeClicked, playerState, webPlaybackSdk } = this.state;
+
+    if (!prevProps.isPlaying && isPlaying && playerState.paused) {
+      if (firstTimeClicked) {
+        this.play(url);
+        this.setState({ firstTimeClicked: false });
+        return;
+      }
+
+      await webPlaybackSdk.resume();
+    }
+
+    if (prevProps.isPlaying && !isPlaying && !playerState.paused) {
+      await webPlaybackSdk.pause();
+    }
+    // TODO: implement a mechanysm to 100% sync with play/pause button state
+    // (e.g. prevent user clicks when song is not ready)
   }
 
   getAlbumCover = async () => {
@@ -68,7 +96,7 @@ class SpotitySong extends Component {
     });
 
     webPlaybackSdk.addListener("initialization_error", ({ message }) => {
-      console.error("initialization_error", message);
+      console.error("initialization_error (EME browser support?)", message);
     });
     webPlaybackSdk.addListener("authentication_error", ({ message }) => {
       console.error("authentication_error", message);
@@ -80,15 +108,17 @@ class SpotitySong extends Component {
       console.error("playback_error", message);
     });
     webPlaybackSdk.addListener("player_state_changed", (state) => {
-      if (!state) {
+      if (!state || !this._isMounted) {
         return;
       }
+
       if (printDebug) {
         console.log("player_state_changed", state);
         console.log("current track", state.track_window.current_track);
       }
       this.setState({ currentTrack: state.track_window.current_track });
       this.setState({ playerState: state });
+      this.checkIfSongEnded(state);
     });
 
     webPlaybackSdk.addListener("ready", ({ device_id }) => {
@@ -101,15 +131,14 @@ class SpotitySong extends Component {
     });
 
     webPlaybackSdk.addListener("not_ready", ({ device_id }) => {
-      console.log("Device ID has gone offline", device_id);
+      console.error("Device ID has gone offline", device_id);
     });
 
-    console.log("Request to connect SDK....");
-    const isSdkConnected = await webPlaybackSdk.connect();
-    if (!isSdkConnected) {
-      console.error("    FAIL: Web Playback SDK didn't connect to Spotify");
+    const didSdkConnect = await webPlaybackSdk.connect();
+    if (!didSdkConnect) {
+      console.error("FAIL: Web Playback SDK didn't connect to Spotify");
     } else {
-      console.log("   SUCCESS: Web Playback SDK connected to Spotify");
+      console.log("SUCCESS: Web Playback SDK connected to Spotify");
     }
 
     this.setState({ webPlaybackSdk });
@@ -125,36 +154,23 @@ class SpotitySong extends Component {
     });
   };
 
-  async componentDidUpdate(prevProps) {
-    if (!this.state.isReady) {
-      return;
+  checkIfSongEnded = (state) => {
+    if (state.paused && state.duration - state.position < 1000) {
+      this.props.onEnded();
     }
-
-    const { url, isPlaying } = this.props;
-    const { firstTimeClicked, playerState } = this.state;
-
-    if (!prevProps.isPlaying && isPlaying && playerState.paused) {
-      if (firstTimeClicked) {
-        this.play(url);
-        this.setState({ firstTimeClicked: false });
-        return;
-      }
-
-      await this.state.webPlaybackSdk.resume();
-    }
-
-    if (prevProps.isPlaying && !isPlaying && !playerState.paused) {
-      await this.state.webPlaybackSdk.pause();
-    }
-    // TODO: implement a mechanysm to 100% sync with play/pause button state
-    // (e.g. prevent user clicks when song is not ready)
-  }
+  };
 
   getAlbumCoverUrl = (currentTrack) => {
     const albumCoverImage = currentTrack.album.images.find(
       (image) => image.height > 500
     );
     return albumCoverImage ? albumCoverImage.url : "";
+  };
+
+  spotifySongToEnd = (event) => {
+    const { webPlaybackSdk, currentTrack } = this.state;
+    webPlaybackSdk.seek(currentTrack.duration_ms - 7000);
+    event.stopPropagation();
   };
 
   render() {
@@ -186,6 +202,12 @@ class SpotitySong extends Component {
               <h2>
                 <b>Is playing?</b> {isPlaying ? "Yes" : "No"}
               </h2>
+              <button
+                className="btn btn-warning"
+                onClick={(event) => this.spotifySongToEnd(event)}
+              >
+                To End
+              </button>
             </div>
           )}
         </div>
@@ -200,6 +222,7 @@ SpotitySong.propTypes = {
   songId: PropTypes.string.isRequired,
   isPlaying: PropTypes.bool.isRequired,
   onPlayClick: PropTypes.func.isRequired,
+  onEnded: PropTypes.func.isRequired,
 };
 
 export default SpotitySong;

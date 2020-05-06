@@ -102,6 +102,7 @@ class Player extends Component {
               selectedSong={selectedSong}
               isPlaying={isPlaying}
               onPlayClick={onPlayClick}
+              onEnded={onEnded}
             />
           )}
         </div>
