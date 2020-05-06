@@ -5,6 +5,7 @@ import { getSongs } from "../services/fakePlaylistService";
 import _ from "lodash";
 import Player from "./Player";
 import PlayerControls from "./PlayerControls";
+import ReactPlayer from "react-player";
 
 class ShowPlaylist extends Component {
   state = {
@@ -104,6 +105,14 @@ class ShowPlaylist extends Component {
     this.setState({ selectedSong: sortedSong[nextIndex] });
   };
 
+  handleSongEnded = () => {
+    // TODO: workaround for bug https://github.com/CookPete/react-player/issues/879
+    if (this.state.selectedSong.host.toLowerCase() === "soundcloud") {
+      this.setState({ isPlaying: true });
+    }
+    this.handleNextButtonClick();
+  };
+
   // Note: callback for external player play/pause
   handlePlayerOnPlay = () => {
     this.setState({ isPlaying: true });
@@ -149,6 +158,7 @@ class ShowPlaylist extends Component {
                 onPlay={this.handlePlayerOnPlay}
                 onPause={this.handlePlayerOnPause}
                 onPlayClick={this.handlePlayButtonClick}
+                onEnded={this.handleSongEnded}
               />
             </div>
 

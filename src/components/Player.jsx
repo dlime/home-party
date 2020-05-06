@@ -8,7 +8,7 @@ import SpotifyPlayer from "./spotify/SpotifyPlayer";
 // TODO: move these constants in a config file + comment values
 const youtubeUrlPrefix = "https://www.youtube.com/watch?v=";
 const youtubeConfig = {
-  controls: 0,
+  controls: 1,
   disablekb: 1,
   fs: 0,
   cc_load_policy: 0,
@@ -64,6 +64,7 @@ class Player extends Component {
       onPlay,
       onPause,
       onPlayClick,
+      onEnded,
     } = this.props;
     const { hostId, host } = selectedSong;
     const url = this.getUrl(hostId, host);
@@ -92,6 +93,7 @@ class Player extends Component {
               }}
               onPlay={onPlay}
               onPause={onPause}
+              onEnded={onEnded}
             />
           )}
           {host === "Spotify" && (
@@ -114,6 +116,7 @@ Player.propTypes = {
   onPlay: PropTypes.func.isRequired,
   onPause: PropTypes.func.isRequired,
   onPlayClick: PropTypes.func.isRequired,
+  onEnded: PropTypes.func.isRequired,
 };
 
 export default Player;
