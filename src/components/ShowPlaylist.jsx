@@ -16,7 +16,19 @@ class ShowPlaylist extends Component {
     isPlaying: false,
   };
 
-  getSelectedSongBeforeLogin = (songs) => {
+  componentDidMount() {
+    const songs = getSongs();
+    this.setState({ songs });
+    this.manageSpotifyLoginRedirect(songs);
+  }
+
+  manageSpotifyLoginRedirect = (songs) => {
+    const selectedSong = this.getSelectedSongBeforeRedirect(songs);
+    const isPlaying = this.getIsPlayingBeforeRedirect();
+    this.setState({ selectedSong, isPlaying });
+  };
+
+  getSelectedSongBeforeRedirect = (songs) => {
     const selectedSong = this.readAndRemoveFromLocalStorage("selectedSong");
     if (!selectedSong || !selectedSong._id) {
       return songs.length > 0 ? songs[0] : null;
@@ -25,7 +37,7 @@ class ShowPlaylist extends Component {
     return songs.find((song) => song._id === selectedSong._id);
   };
 
-  getIsPlaying = () => {
+  getIsPlayingBeforeRedirect = () => {
     const isPlaying = this.readAndRemoveFromLocalStorage("isPlaying");
     return isPlaying ? true : false;
   };
@@ -39,14 +51,6 @@ class ShowPlaylist extends Component {
     localStorage.removeItem(key);
     return JSON.parse(storageValue);
   };
-
-  componentDidMount() {
-    const songs = getSongs();
-    // Manage a possibly redirect from Spotify login
-    const selectedSong = this.getSelectedSongBeforeLogin(songs);
-    const isPlaying = this.getIsPlaying();
-    this.setState({ songs, selectedSong, isPlaying });
-  }
 
   handleDeleteButton = async (id) => {
     const { songs } = this.state;
@@ -84,7 +88,7 @@ class ShowPlaylist extends Component {
       console.error("Previous song click: current song not found");
       return;
     }
-    const previousIndex = index == 0 ? 0 : index - 1;
+    const previousIndex = index === 0 ? 0 : index - 1;
     this.setState({ selectedSong: sortedSong[previousIndex] });
   };
 
@@ -96,7 +100,7 @@ class ShowPlaylist extends Component {
       console.error("Next song click: current song not found");
       return;
     }
-    const nextIndex = index == sortedSong.length - 1 ? index : index + 1;
+    const nextIndex = index === sortedSong.length - 1 ? index : index + 1;
     this.setState({ selectedSong: sortedSong[nextIndex] });
   };
 

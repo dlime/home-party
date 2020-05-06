@@ -15,7 +15,7 @@ const createKey = (item, column, dataKey) => {
 };
 
 const rowClass = (song, selectedSong) => {
-  return "cursor-pointer" + (song == selectedSong ? " table-active" : "");
+  return "cursor-pointer" + (song === selectedSong ? " table-active" : "");
 };
 
 const TableBody = ({ selectedSong, data, dataKey, columns, onSongClick }) => {
