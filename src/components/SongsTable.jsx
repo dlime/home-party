@@ -4,22 +4,25 @@ import Table from "./common/Table";
 
 class SongsTable extends Component {
   columns = [
-    { path: "name", label: "Name" },
-    { path: "duration", label: "Duration" },
+    {
+      path: "name",
+      label: "Title",
+      content: (song) => {
+        return song.artist + " - " + song.name;
+      },
+    },
     { path: "host", label: "Site" },
     {
       path: "delete",
       content: (song) => {
         return (
-          <button
+          <i
+            className="fas fa-trash"
             onClick={(event) => {
               this.props.onDelete(song._id);
               event.stopPropagation();
             }}
-            className="btn btn-danger btn-s"
-          >
-            Delete
-          </button>
+          ></i>
         );
       },
     },

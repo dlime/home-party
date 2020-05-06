@@ -21,7 +21,7 @@ export const songs = [
     artist: "Aphex Twin",
     name: "Polynomial-C",
     duration: "110",
-    host: "Soundcloud",
+    host: "SoundCloud",
     hostId: "r-srecords/aphex-twin-polynomial-c-1",
   },
   {

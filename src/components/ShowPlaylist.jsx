@@ -5,7 +5,6 @@ import { getSongs } from "../services/fakePlaylistService";
 import _ from "lodash";
 import Player from "./Player";
 import PlayerControls from "./PlayerControls";
-import ReactPlayer from "react-player";
 
 class ShowPlaylist extends Component {
   state = {
