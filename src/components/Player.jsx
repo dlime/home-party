@@ -4,6 +4,7 @@ import ReactPlayer from "react-player";
 import Script from "react-load-script";
 import { getSpotifyTokenFromHash } from "./spotify/Utils.js";
 import SpotifyPlayer from "./spotify/SpotifyPlayer";
+import { Helmet } from "react-helmet";
 
 // TODO: move these constants in a config file + comment values
 const youtubeUrlPrefix = "https://www.youtube.com/watch?v=";
@@ -66,7 +67,7 @@ class Player extends Component {
       onPlayClick,
       onEnded,
     } = this.props;
-    const { hostId, host } = selectedSong;
+    const { hostId, host, name, artist } = selectedSong;
     const url = this.getUrl(hostId, host);
     return (
       <React.Fragment>
@@ -74,6 +75,9 @@ class Player extends Component {
           url="https://sdk.scdn.co/spotify-player.js"
           onCreate={this.handleScriptCreate}
         />
+        <Helmet>
+          <title>{artist + " - " + name + " @ Home Party"}</title>
+        </Helmet>
 
         <div className="player-wrapper">
           {host !== "Spotify" && (
