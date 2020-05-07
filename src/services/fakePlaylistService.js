@@ -25,6 +25,14 @@ export const songs = [
     hostId: "r-srecords/aphex-twin-polynomial-c-1",
   },
   {
+    _id: "5b21ca3eeb7f6fbccd4718",
+    artist: "Aphex Twin",
+    name: "Didgeridoo",
+    duration: "110",
+    host: "SoundCloud",
+    hostId: "r-srecords/aphex-twin-digeridoo-2",
+  },
+  {
     _id: "5b21ca3eeb7f6fbccd471",
     artist: "Cassius",
     name: "Cassius 1999",

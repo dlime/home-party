@@ -9,7 +9,7 @@ import { Helmet } from "react-helmet";
 // TODO: move these constants in a config file + comment values
 const youtubeUrlPrefix = "https://www.youtube.com/watch?v=";
 const youtubeConfig = {
-  controls: 1,
+  controls: 0,
   disablekb: 1,
   fs: 0,
   cc_load_policy: 0,
@@ -66,6 +66,11 @@ class Player extends Component {
       onPause,
       onPlayClick,
       onEnded,
+      onDuration,
+      onSeek,
+      onProgress,
+      onReady,
+      onPlayerRef,
     } = this.props;
     const { hostId, host, name, artist } = selectedSong;
     const url = this.getUrl(hostId, host);
@@ -82,11 +87,13 @@ class Player extends Component {
         <div className="player-wrapper">
           {host !== "Spotify" && (
             <ReactPlayer
+              ref={onPlayerRef}
               className="react-player"
               url={url}
               width="100%"
               controls={false}
               playing={isPlaying}
+              progressInterval={20}
               config={{
                 youtube: {
                   playerVars: youtubeConfig,
@@ -98,6 +105,10 @@ class Player extends Component {
               onPlay={onPlay}
               onPause={onPause}
               onEnded={onEnded}
+              onDuration={onDuration}
+              onSeek={onSeek}
+              onProgress={(state) => onProgress(state.playedSeconds)}
+              onReady={onReady}
             />
           )}
           {host === "Spotify" && (

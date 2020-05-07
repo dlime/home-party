@@ -5,6 +5,7 @@ import { getSongs } from "../services/fakePlaylistService";
 import _ from "lodash";
 import Player from "./Player";
 import PlayerControls from "./PlayerControls";
+import { Slider } from "@material-ui/core";
 
 class ShowPlaylist extends Component {
   state = {
@@ -14,6 +15,8 @@ class ShowPlaylist extends Component {
     songs: [],
     selectedSong: { hostId: "", host: "" },
     isPlaying: false,
+    progressValue: 0,
+    duration: 0,
   };
 
   componentDidMount() {
@@ -25,7 +28,8 @@ class ShowPlaylist extends Component {
   manageSpotifyLoginRedirect = (songs) => {
     const selectedSong = this.getSelectedSongBeforeRedirect(songs);
     const isPlaying = this.getIsPlayingBeforeRedirect();
-    this.setState({ selectedSong, isPlaying });
+    this.selectSong(selectedSong);
+    this.setState({ isPlaying });
   };
 
   getSelectedSongBeforeRedirect = (songs) => {
@@ -52,6 +56,32 @@ class ShowPlaylist extends Component {
     return JSON.parse(storageValue);
   };
 
+  // TODO: ugly stuff, this is to reset progress slide every time a song is changed
+  // since there will be a load time between next song will updated it
+  selectSong = (selectedSong) => {
+    this.setState({ selectedSong, progressValue: 0, duration: 100 });
+  };
+
+  getSortedSongs = () => {
+    const { songs, sortColumn, searchQuery } = this.state;
+
+    let filteredSongs = songs;
+    if (searchQuery) {
+      filteredSongs = songs.filter((song) =>
+        //TODO: improve search method
+        song.name.toLowerCase().startsWith(searchQuery.toLowerCase())
+      );
+    }
+
+    const sortedSongs = _.orderBy(
+      filteredSongs,
+      [sortColumn.path],
+      [sortColumn.order]
+    );
+
+    return sortedSongs;
+  };
+
   handleDeleteButton = async (id) => {
     const { songs } = this.state;
     const originalSongs = songs;
@@ -64,7 +94,7 @@ class ShowPlaylist extends Component {
   };
 
   handleSongClick = (selectedSong) => {
-    this.setState({ selectedSong });
+    this.selectSong(selectedSong);
   };
 
   handleSortClick = (sortColumn) => {
@@ -89,7 +119,7 @@ class ShowPlaylist extends Component {
       return;
     }
     const previousIndex = index === 0 ? 0 : index - 1;
-    this.setState({ selectedSong: sortedSong[previousIndex] });
+    this.selectSong(sortedSong[previousIndex]);
   };
 
   handleNextButtonClick = () => {
@@ -101,7 +131,7 @@ class ShowPlaylist extends Component {
       return;
     }
     const nextIndex = index === sortedSong.length - 1 ? index : index + 1;
-    this.setState({ selectedSong: sortedSong[nextIndex] });
+    this.selectSong(sortedSong[nextIndex]);
   };
 
   handleSongEnded = () => {
@@ -122,24 +152,24 @@ class ShowPlaylist extends Component {
     this.setState({ isPlaying: false });
   };
 
-  getSortedSongs = () => {
-    const { songs, sortColumn, searchQuery } = this.state;
+  handleDuration = (duration) => {
+    this.setState({ duration });
+  };
 
-    let filteredSongs = songs;
-    if (searchQuery) {
-      filteredSongs = songs.filter((song) =>
-        //TODO: improve search method
-        song.name.toLowerCase().startsWith(searchQuery.toLowerCase())
-      );
+  handleProgress = (playedSeconds) => {
+    this.setState({ progressValue: playedSeconds });
+  };
+
+  handleSliderChange = (event, progressValue) => {
+    this.setState({ progressValue });
+    if (this.reactPlayerInstance) {
+      this.reactPlayerInstance.seekTo(progressValue, "seconds");
     }
+  };
 
-    const sortedSongs = _.orderBy(
-      filteredSongs,
-      [sortColumn.path],
-      [sortColumn.order]
-    );
-
-    return sortedSongs;
+  getReactPlayerInstance = (reactPlayerInstance) => {
+    // TODO: Ugly stuff.. required for seeking to a specific position. Refactor into Player
+    this.reactPlayerInstance = reactPlayerInstance;
   };
 
   render() {
@@ -158,6 +188,9 @@ class ShowPlaylist extends Component {
                 onPause={this.handlePlayerOnPause}
                 onPlayClick={this.handlePlayButtonClick}
                 onEnded={this.handleSongEnded}
+                onProgress={this.handleProgress}
+                onDuration={this.handleDuration}
+                onPlayerRef={this.getReactPlayerInstance}
               />
             </div>
 
@@ -174,6 +207,14 @@ class ShowPlaylist extends Component {
             </div>
           </div>
         </main>
+        <Slider
+          min={0}
+          max={this.state.duration}
+          value={this.state.progressValue}
+          onChange={this.handleSliderChange}
+          aria-labelledby="continuous-slider"
+          // getAriaValueText={this.state.value.toString()}
+        />
         <PlayerControls
           isPlaying={isPlaying}
           onPlayClick={this.handlePlayButtonClick}
