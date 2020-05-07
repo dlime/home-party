@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import spotifyService from "../../services/spotifyService";
 
-const printDebug = false;
+const printDebug = true;
 
 class SpotitySong extends Component {
   state = {
@@ -15,6 +15,7 @@ class SpotitySong extends Component {
       artists: [{ name: "" }],
       album: { images: [{ url: "" }, { url: "" }, { url: "" }] },
     },
+    progressValue: 0,
   };
   _isMounted = false; // Used to prevent setStates in Spotify callbacks
 
@@ -30,6 +31,10 @@ class SpotitySong extends Component {
     let webPlaybackSdk = this.state.webPlaybackSdk;
     if (webPlaybackSdk) {
       await webPlaybackSdk.disconnect();
+    }
+
+    if (this.interval) {
+      clearInterval(this.interval);
     }
   }
 
@@ -117,6 +122,7 @@ class SpotitySong extends Component {
         console.log("current track", state.track_window.current_track);
       }
       this.setState({ currentTrack: state.track_window.current_track });
+      state.updateTime = performance.now();
       this.setState({ playerState: state });
       this.checkIfSongEnded(state);
     });
@@ -125,6 +131,7 @@ class SpotitySong extends Component {
       // TODO: disable play/pause button until everything is loaded
       console.log("Ready with Device ID", device_id);
       this.setState({ isReady: true });
+      this.interval = setInterval(this.getProgressValue, 500);
       if (this.props.isPlaying) {
         this.play(this.props.url);
       }
@@ -158,6 +165,35 @@ class SpotitySong extends Component {
     if (state.paused && state.duration - state.position < 1000) {
       this.props.onEnded();
     }
+  };
+
+  getProgressValue = () => {
+    const { playerState } = this.state;
+    if (!playerState) {
+      console.log("progressValue: 0");
+      this.setState({ progressValue: 0 });
+      this.props.onProgress(0);
+      return;
+    }
+
+    if (playerState.paused) {
+      const progressValue = playerState.position
+        ? playerState.position / 1000
+        : 0;
+      console.log("progressValue: playerState.paused", progressValue);
+      this.setState({ progressValue });
+      this.props.onProgress(progressValue);
+      return;
+    }
+
+    const position =
+      playerState.position +
+      (performance.now() - playerState.updateTime) / 1000;
+    const return_value =
+      position > playerState.duration ? playerState.duration / 1000 : position;
+    console.log("progressValue:", return_value);
+    this.setState({ progressValue: return_value });
+    this.props.onProgress(return_value);
   };
 
   getAlbumCoverUrl = (currentTrack) => {

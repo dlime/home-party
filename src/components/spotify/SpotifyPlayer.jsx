@@ -15,6 +15,7 @@ const SpotifyPlayer = ({
   isPlaying,
   onPlayClick,
   onEnded,
+  onProgress,
 }) => {
   const token = getToken();
   return (
@@ -32,6 +33,7 @@ const SpotifyPlayer = ({
           isPlaying={isPlaying}
           onPlayClick={onPlayClick}
           onEnded={onEnded}
+          onProgress={onProgress}
         />
       )}
     </React.Fragment>

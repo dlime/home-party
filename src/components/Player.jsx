@@ -118,6 +118,7 @@ class Player extends Component {
               isPlaying={isPlaying}
               onPlayClick={onPlayClick}
               onEnded={onEnded}
+              onProgress={onProgress}
             />
           )}
         </div>
