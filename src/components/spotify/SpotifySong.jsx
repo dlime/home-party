@@ -112,19 +112,24 @@ class SpotitySong extends Component {
     webPlaybackSdk.addListener("playback_error", ({ message }) => {
       console.error("playback_error", message);
     });
-    webPlaybackSdk.addListener("player_state_changed", (state) => {
-      if (!state || !this._isMounted) {
+    webPlaybackSdk.addListener("player_state_changed", (playerState) => {
+      if (!playerState || !this._isMounted) {
         return;
       }
 
       if (printDebug) {
-        console.log("player_state_changed", state);
+        console.log("player_state_changed", playerState);
         // console.log("current track", state.track_window.current_track);
       }
-      this.setState({ currentTrack: state.track_window.current_track });
-      state.updateTime = performance.now();
-      this.setState({ playerState: state });
-      this.checkIfSongEnded(state);
+      this.setState({ currentTrack: playerState.track_window.current_track });
+
+      // Add updateTime field to compute progress bar between the callbacks
+      playerState.updateTime = performance.now();
+      this.setState({ playerState });
+
+      this.checkIfSongEnded(playerState);
+
+      this.props.onDuration(playerState.duration / 1000);
     });
 
     webPlaybackSdk.addListener("ready", ({ device_id }) => {
@@ -167,45 +172,31 @@ class SpotitySong extends Component {
     }
   };
 
+  updateProgressBar(progressValueMilliseconds) {
+    const progressValueSeconds = progressValueMilliseconds / 1000;
+    this.setState({ progressValue: progressValueSeconds });
+    this.props.onProgress(progressValueSeconds);
+  }
+
   getProgressValue = () => {
     const { playerState } = this.state;
 
     if (!playerState) {
-      console.log("progressValue: 0");
-      this.setState({ progressValue: 0 });
-      this.props.onProgress(0);
+      this.updateProgressBar(0);
       return;
     }
 
     if (playerState.paused) {
-      const progressValue = playerState.position
-        ? playerState.position / 1000
-        : 0;
-      console.log("progressValue: playerState.paused", progressValue);
-      this.setState({ progressValue });
-      this.props.onProgress(progressValue);
+      const progressValue = playerState.position ? playerState.position : 0;
+      this.updateProgressBar(progressValue);
       return;
     }
 
     const position =
-      (playerState.position + (performance.now() - playerState.updateTime)) /
-      1000;
-
+      playerState.position + (performance.now() - playerState.updateTime);
     const progressValue =
-      position > playerState.duration ? playerState.duration / 1000 : position;
-
-    console.log(
-      "progressValue: " +
-        progressValue +
-        " position: " +
-        position +
-        " playerState.position: " +
-        playerState.position +
-        " playerState.duration: " +
-        playerState.duration
-    );
-    this.setState({ progressValue });
-    this.props.onProgress(progressValue);
+      position > playerState.duration ? playerState.duration : position;
+    this.updateProgressBar(progressValue);
   };
 
   getAlbumCoverUrl = (currentTrack) => {
@@ -274,6 +265,8 @@ SpotitySong.propTypes = {
   isPlaying: PropTypes.bool.isRequired,
   onPlayClick: PropTypes.func.isRequired,
   onEnded: PropTypes.func.isRequired,
+  onProgress: PropTypes.func.isRequired,
+  onDuration: PropTypes.func.isRequired,
 };
 
 export default SpotitySong;

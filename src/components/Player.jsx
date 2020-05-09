@@ -67,9 +67,7 @@ class Player extends Component {
       onPlayClick,
       onEnded,
       onDuration,
-      onSeek,
       onProgress,
-      onReady,
       onPlayerRef,
     } = this.props;
     const { hostId, host, name, artist } = selectedSong;
@@ -106,9 +104,7 @@ class Player extends Component {
               onPause={onPause}
               onEnded={onEnded}
               onDuration={onDuration}
-              onSeek={onSeek}
               onProgress={(state) => onProgress(state.playedSeconds)}
-              onReady={onReady}
             />
           )}
           {host === "Spotify" && (
@@ -119,6 +115,7 @@ class Player extends Component {
               onPlayClick={onPlayClick}
               onEnded={onEnded}
               onProgress={onProgress}
+              onDuration={onDuration}
             />
           )}
         </div>
@@ -134,6 +131,9 @@ Player.propTypes = {
   onPause: PropTypes.func.isRequired,
   onPlayClick: PropTypes.func.isRequired,
   onEnded: PropTypes.func.isRequired,
+  onDuration: PropTypes.func.isRequired,
+  onProgress: PropTypes.func.isRequired,
+  onPlayerRef: PropTypes.func.isRequired,
 };
 
 export default Player;
