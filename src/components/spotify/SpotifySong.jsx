@@ -15,9 +15,9 @@ class SpotitySong extends Component {
       artists: [{ name: "" }],
       album: { images: [{ url: "" }, { url: "" }, { url: "" }] },
     },
-    progressValue: 0,
+    progressValue: 0, // TODO: maybe remove
   };
-  _isMounted = false; // Used to prevent setStates in Spotify callbacks
+  _isMounted = false; // Used to prevent setStates in Spotify callbacks during shutdown
 
   async componentDidMount() {
     this._isMounted = true;
@@ -119,7 +119,7 @@ class SpotitySong extends Component {
 
       if (printDebug) {
         console.log("player_state_changed", state);
-        console.log("current track", state.track_window.current_track);
+        // console.log("current track", state.track_window.current_track);
       }
       this.setState({ currentTrack: state.track_window.current_track });
       state.updateTime = performance.now();
@@ -131,7 +131,7 @@ class SpotitySong extends Component {
       // TODO: disable play/pause button until everything is loaded
       console.log("Ready with Device ID", device_id);
       this.setState({ isReady: true });
-      this.interval = setInterval(this.getProgressValue, 500);
+      this.interval = setInterval(this.getProgressValue, 500); // TODO: use 20ms
       if (this.props.isPlaying) {
         this.play(this.props.url);
       }
@@ -169,6 +169,7 @@ class SpotitySong extends Component {
 
   getProgressValue = () => {
     const { playerState } = this.state;
+
     if (!playerState) {
       console.log("progressValue: 0");
       this.setState({ progressValue: 0 });
@@ -187,13 +188,24 @@ class SpotitySong extends Component {
     }
 
     const position =
-      playerState.position +
-      (performance.now() - playerState.updateTime) / 1000;
-    const return_value =
+      (playerState.position + (performance.now() - playerState.updateTime)) /
+      1000;
+
+    const progressValue =
       position > playerState.duration ? playerState.duration / 1000 : position;
-    console.log("progressValue:", return_value);
-    this.setState({ progressValue: return_value });
-    this.props.onProgress(return_value);
+
+    console.log(
+      "progressValue: " +
+        progressValue +
+        " position: " +
+        position +
+        " playerState.position: " +
+        playerState.position +
+        " playerState.duration: " +
+        playerState.duration
+    );
+    this.setState({ progressValue });
+    this.props.onProgress(progressValue);
   };
 
   getAlbumCoverUrl = (currentTrack) => {
@@ -210,7 +222,7 @@ class SpotitySong extends Component {
   };
 
   render() {
-    const { currentTrack, playerState } = this.state;
+    const { currentTrack, playerState, progressValue } = this.state;
     const { isPlaying, onPlayClick } = this.props;
 
     const albumCoverUrl = this.getAlbumCoverUrl(currentTrack);
@@ -237,6 +249,9 @@ class SpotitySong extends Component {
               </h2>
               <h2>
                 <b>Is playing?</b> {isPlaying ? "Yes" : "No"}
+              </h2>
+              <h2>
+                <b>Progress Value</b> {progressValue}
               </h2>
               <button
                 className="btn btn-warning"

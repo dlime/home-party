@@ -156,8 +156,8 @@ class ShowPlaylist extends Component {
     this.setState({ duration });
   };
 
-  handleProgress = (playedSeconds) => {
-    this.setState({ progressValue: playedSeconds });
+  handleProgress = (progressValue) => {
+    this.setState({ progressValue });
   };
 
   handleSliderChange = (event, progressValue) => {
