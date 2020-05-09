@@ -17,6 +17,7 @@ class ShowPlaylist extends Component {
     isPlaying: false,
     progressValue: 0,
     duration: 0,
+    seekTo: 0,
   };
 
   componentDidMount() {
@@ -156,24 +157,25 @@ class ShowPlaylist extends Component {
     this.setState({ duration });
   };
 
+  // Needed for sync possible slide bar changes in Player (i.e. SoundCloud). Could be removed.
   handleProgress = (progressValue) => {
     this.setState({ progressValue });
   };
 
   handleSliderChange = (event, progressValue) => {
-    this.setState({ progressValue });
-    if (this.reactPlayerInstance) {
-      this.reactPlayerInstance.seekTo(progressValue, "seconds");
-    }
-  };
-
-  getReactPlayerInstance = (reactPlayerInstance) => {
-    // TODO: Ugly stuff.. required for seeking to a specific position. Refactor into Player
-    this.reactPlayerInstance = reactPlayerInstance;
+    this.setState({ progressValue, seekTo: progressValue });
   };
 
   render() {
-    const { searchQuery, sortColumn, selectedSong, isPlaying } = this.state;
+    const {
+      searchQuery,
+      sortColumn,
+      selectedSong,
+      isPlaying,
+      duration,
+      progressValue,
+      seekTo,
+    } = this.state;
     const data = this.getSortedSongs();
 
     return (
@@ -184,13 +186,13 @@ class ShowPlaylist extends Component {
               <Player
                 selectedSong={selectedSong}
                 isPlaying={isPlaying}
+                seekTo={seekTo}
                 onPlay={this.handlePlayerOnPlay}
                 onPause={this.handlePlayerOnPause}
                 onPlayClick={this.handlePlayButtonClick}
                 onEnded={this.handleSongEnded}
                 onProgress={this.handleProgress}
                 onDuration={this.handleDuration}
-                onPlayerRef={this.getReactPlayerInstance}
               />
             </div>
 
@@ -209,8 +211,8 @@ class ShowPlaylist extends Component {
         </main>
         <Slider
           min={0}
-          max={this.state.duration}
-          value={this.state.progressValue}
+          max={duration}
+          value={progressValue}
           onChange={this.handleSliderChange}
           aria-labelledby="continuous-slider"
           // getAriaValueText={this.state.value.toString()}

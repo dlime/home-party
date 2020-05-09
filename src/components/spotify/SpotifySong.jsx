@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import spotifyService from "../../services/spotifyService";
 
-const printDebug = true;
+const printDebug = false;
 
 class SpotitySong extends Component {
   state = {
@@ -43,9 +43,15 @@ class SpotitySong extends Component {
       return;
     }
 
+    await this.manageTogglePlayClick(prevProps);
+    await this.manageSeekTo(prevProps);
+  }
+
+  manageTogglePlayClick = async (prevProps) => {
+    // TODO: implement a mechanysm to 100% sync with play/pause button state
+    // (e.g. prevent user clicks when song is not ready)
     const { url, isPlaying } = this.props;
     const { firstTimeClicked, playerState, webPlaybackSdk } = this.state;
-
     if (!prevProps.isPlaying && isPlaying && playerState.paused) {
       if (firstTimeClicked) {
         this.play(url);
@@ -59,9 +65,13 @@ class SpotitySong extends Component {
     if (prevProps.isPlaying && !isPlaying && !playerState.paused) {
       await webPlaybackSdk.pause();
     }
-    // TODO: implement a mechanysm to 100% sync with play/pause button state
-    // (e.g. prevent user clicks when song is not ready)
-  }
+  };
+
+  manageSeekTo = async (prevProps) => {
+    if (prevProps.seekTo !== this.props.seekTo) {
+      await this.state.webPlaybackSdk.seek(this.props.seekTo * 1000);
+    }
+  };
 
   getAlbumCover = async () => {
     const { songId } = this.props;
@@ -119,7 +129,7 @@ class SpotitySong extends Component {
 
       if (printDebug) {
         console.log("player_state_changed", playerState);
-        // console.log("current track", state.track_window.current_track);
+        console.log("current track", playerState.track_window.current_track);
       }
       this.setState({ currentTrack: playerState.track_window.current_track });
 
@@ -136,7 +146,7 @@ class SpotitySong extends Component {
       // TODO: disable play/pause button until everything is loaded
       console.log("Ready with Device ID", device_id);
       this.setState({ isReady: true });
-      this.interval = setInterval(this.getProgressValue, 500); // TODO: use 20ms
+      this.interval = setInterval(this.getProgressValue, 20);
       if (this.props.isPlaying) {
         this.play(this.props.url);
       }

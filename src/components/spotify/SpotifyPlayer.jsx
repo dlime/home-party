@@ -17,6 +17,7 @@ const SpotifyPlayer = ({
   onEnded,
   onProgress,
   onDuration,
+  seekTo,
 }) => {
   const token = getToken();
   return (
@@ -30,6 +31,7 @@ const SpotifyPlayer = ({
         <SpotitySong
           token={token}
           url={url}
+          seekTo={seekTo}
           songId={selectedSong.hostId}
           isPlaying={isPlaying}
           onPlayClick={onPlayClick}

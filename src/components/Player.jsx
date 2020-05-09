@@ -37,6 +37,14 @@ class Player extends Component {
     getSpotifyTokenFromHash();
   }
 
+  componentDidUpdate(prevProps) {
+    if (this.reactPlayerInstance) {
+      if (prevProps.seekTo !== this.props.seekTo) {
+        this.reactPlayerInstance.seekTo(this.props.seekTo, "seconds");
+      }
+    }
+  }
+
   handleScriptCreate = () => {
     window.onSpotifyWebPlaybackSDKReady = () => {
       console.log(
@@ -58,6 +66,11 @@ class Player extends Component {
     }
   };
 
+  getReactPlayerInstance = (reactPlayerInstance) => {
+    // Required for seeking to a specific position
+    this.reactPlayerInstance = reactPlayerInstance;
+  };
+
   render() {
     const {
       selectedSong,
@@ -68,7 +81,7 @@ class Player extends Component {
       onEnded,
       onDuration,
       onProgress,
-      onPlayerRef,
+      seekTo,
     } = this.props;
     const { hostId, host, name, artist } = selectedSong;
     const url = this.getUrl(hostId, host);
@@ -85,7 +98,7 @@ class Player extends Component {
         <div className="player-wrapper">
           {host !== "Spotify" && (
             <ReactPlayer
-              ref={onPlayerRef}
+              ref={this.getReactPlayerInstance}
               className="react-player"
               url={url}
               width="100%"
@@ -116,6 +129,7 @@ class Player extends Component {
               onEnded={onEnded}
               onProgress={onProgress}
               onDuration={onDuration}
+              seekTo={seekTo}
             />
           )}
         </div>
@@ -133,7 +147,6 @@ Player.propTypes = {
   onEnded: PropTypes.func.isRequired,
   onDuration: PropTypes.func.isRequired,
   onProgress: PropTypes.func.isRequired,
-  onPlayerRef: PropTypes.func.isRequired,
 };
 
 export default Player;
