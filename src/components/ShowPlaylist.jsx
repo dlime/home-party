@@ -222,7 +222,7 @@ class ShowPlaylist extends Component {
         </main>
         <footer className="bg-light" style={{ "padding-bottom": "20px" }}>
           <Slider
-            style={{ "padding-top": "0px" }}
+            style={{ "padding-top": "0px", "margin-bottom": "5px" }}
             defaultValue={0}
             min={0}
             max={duration}
