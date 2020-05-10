@@ -6,6 +6,7 @@ import _ from "lodash";
 import Player from "./Player";
 import PlayerControls from "./PlayerControls";
 import { Slider } from "@material-ui/core";
+import { withStyles, makeStyles } from "@material-ui/core/styles";
 
 class ShowPlaylist extends Component {
   state = {
@@ -219,22 +220,25 @@ class ShowPlaylist extends Component {
             </div>
           </div>
         </main>
-        <Slider
-          defaultValue={0}
-          min={0}
-          max={duration}
-          value={progressValue}
-          onChange={this.handleSliderChange}
-          aria-labelledby="continuous-slider"
-          valueLabelDisplay="auto"
-          valueLabelFormat={(value) => this.formatSliderLaber(value)}
-        />
-        <PlayerControls
-          isPlaying={isPlaying}
-          onPlayClick={this.handlePlayButtonClick}
-          onPreviousClick={this.handlePreviousButtonClick}
-          onNextClick={this.handleNextButtonClick}
-        />
+        <footer className="bg-light" style={{ "padding-bottom": "20px" }}>
+          <Slider
+            style={{ "padding-top": "0px" }}
+            defaultValue={0}
+            min={0}
+            max={duration}
+            value={progressValue}
+            onChange={this.handleSliderChange}
+            aria-labelledby="continuous-slider"
+            valueLabelDisplay="auto"
+            valueLabelFormat={(value) => this.formatSliderLaber(value)}
+          />
+          <PlayerControls
+            isPlaying={isPlaying}
+            onPlayClick={this.handlePlayButtonClick}
+            onPreviousClick={this.handlePreviousButtonClick}
+            onNextClick={this.handleNextButtonClick}
+          />
+        </footer>
       </React.Fragment>
     );
   }
