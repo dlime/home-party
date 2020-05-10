@@ -170,6 +170,9 @@ class ShowPlaylist extends Component {
   };
 
   handleSliderChange = (event, progressValue) => {
+    if (!this.state.isPlaying) {
+      this.handlePlayButtonClick();
+    }
     this.setState({ progressValue, seekTo: progressValue });
   };
 
