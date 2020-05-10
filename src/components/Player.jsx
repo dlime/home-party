@@ -9,7 +9,7 @@ import { Helmet } from "react-helmet";
 // TODO: move these constants in a config file + comment values
 const youtubeUrlPrefix = "https://www.youtube.com/watch?v=";
 const youtubeConfig = {
-  controls: 1,
+  controls: 0,
   disablekb: 1,
   fs: 0,
   cc_load_policy: 0,
@@ -37,6 +37,14 @@ class Player extends Component {
     getSpotifyTokenFromHash();
   }
 
+  componentDidUpdate(prevProps) {
+    if (this.reactPlayerInstance) {
+      if (prevProps.seekTo !== this.props.seekTo) {
+        this.reactPlayerInstance.seekTo(this.props.seekTo, "seconds");
+      }
+    }
+  }
+
   handleScriptCreate = () => {
     window.onSpotifyWebPlaybackSDKReady = () => {
       console.log(
@@ -58,6 +66,11 @@ class Player extends Component {
     }
   };
 
+  getReactPlayerInstance = (reactPlayerInstance) => {
+    // Required for seeking to a specific position
+    this.reactPlayerInstance = reactPlayerInstance;
+  };
+
   render() {
     const {
       selectedSong,
@@ -66,6 +79,9 @@ class Player extends Component {
       onPause,
       onPlayClick,
       onEnded,
+      onDuration,
+      onProgress,
+      seekTo,
     } = this.props;
     const { hostId, host, name, artist } = selectedSong;
     const url = this.getUrl(hostId, host);
@@ -82,11 +98,13 @@ class Player extends Component {
         <div className="player-wrapper">
           {host !== "Spotify" && (
             <ReactPlayer
+              ref={this.getReactPlayerInstance}
               className="react-player"
               url={url}
               width="100%"
               controls={false}
               playing={isPlaying}
+              progressInterval={20}
               config={{
                 youtube: {
                   playerVars: youtubeConfig,
@@ -98,6 +116,8 @@ class Player extends Component {
               onPlay={onPlay}
               onPause={onPause}
               onEnded={onEnded}
+              onDuration={onDuration}
+              onProgress={(state) => onProgress(state.playedSeconds)}
             />
           )}
           {host === "Spotify" && (
@@ -107,6 +127,9 @@ class Player extends Component {
               isPlaying={isPlaying}
               onPlayClick={onPlayClick}
               onEnded={onEnded}
+              onProgress={onProgress}
+              onDuration={onDuration}
+              seekTo={seekTo}
             />
           )}
         </div>
@@ -122,6 +145,8 @@ Player.propTypes = {
   onPause: PropTypes.func.isRequired,
   onPlayClick: PropTypes.func.isRequired,
   onEnded: PropTypes.func.isRequired,
+  onDuration: PropTypes.func.isRequired,
+  onProgress: PropTypes.func.isRequired,
 };
 
 export default Player;

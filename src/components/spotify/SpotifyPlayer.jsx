@@ -15,6 +15,9 @@ const SpotifyPlayer = ({
   isPlaying,
   onPlayClick,
   onEnded,
+  onProgress,
+  onDuration,
+  seekTo,
 }) => {
   const token = getToken();
   return (
@@ -28,10 +31,13 @@ const SpotifyPlayer = ({
         <SpotitySong
           token={token}
           url={url}
+          seekTo={seekTo}
           songId={selectedSong.hostId}
           isPlaying={isPlaying}
           onPlayClick={onPlayClick}
           onEnded={onEnded}
+          onProgress={onProgress}
+          onDuration={onDuration}
         />
       )}
     </React.Fragment>
@@ -44,6 +50,8 @@ SpotifyPlayer.propTypes = {
   isPlaying: PropTypes.bool.isRequired,
   onPlayClick: PropTypes.func.isRequired,
   onEnded: PropTypes.func.isRequired,
+  onProgress: PropTypes.func.isRequired,
+  onDuration: PropTypes.func.isRequired,
 };
 
 export default SpotifyPlayer;

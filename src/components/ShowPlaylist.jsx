@@ -5,6 +5,7 @@ import { getSongs } from "../services/fakePlaylistService";
 import _ from "lodash";
 import Player from "./Player";
 import PlayerControls from "./PlayerControls";
+import ProgressBar from "./ProgressBar";
 
 class ShowPlaylist extends Component {
   state = {
@@ -14,6 +15,9 @@ class ShowPlaylist extends Component {
     songs: [],
     selectedSong: { hostId: "", host: "" },
     isPlaying: false,
+    progressValue: 0,
+    duration: 0,
+    seekTo: 0,
   };
 
   componentDidMount() {
@@ -25,7 +29,8 @@ class ShowPlaylist extends Component {
   manageSpotifyLoginRedirect = (songs) => {
     const selectedSong = this.getSelectedSongBeforeRedirect(songs);
     const isPlaying = this.getIsPlayingBeforeRedirect();
-    this.setState({ selectedSong, isPlaying });
+    this.selectSong(selectedSong);
+    this.setState({ isPlaying });
   };
 
   getSelectedSongBeforeRedirect = (songs) => {
@@ -52,6 +57,39 @@ class ShowPlaylist extends Component {
     return JSON.parse(storageValue);
   };
 
+  // TODO: ugly stuff, this is to reset progress slide every time a song is changed
+  // since there will be a load time between next song will updated it
+  selectSong = (selectedSong) => {
+    this.setState({ selectedSong, progressValue: 0, duration: 100 });
+  };
+
+  getSortedSongs = () => {
+    const { songs, sortColumn, searchQuery } = this.state;
+
+    let filteredSongs = songs;
+    if (searchQuery) {
+      filteredSongs = songs.filter((song) =>
+        //TODO: improve search method
+        song.name.toLowerCase().startsWith(searchQuery.toLowerCase())
+      );
+    }
+
+    const sortedSongs = _.orderBy(
+      filteredSongs,
+      [sortColumn.path],
+      [sortColumn.order]
+    );
+
+    return sortedSongs;
+  };
+
+  formatSliderLaber = (progressValue) => {
+    const millis = progressValue * 1000;
+    const minutes = Math.floor(millis / 60000);
+    const seconds = ((millis % 60000) / 1000).toFixed(0);
+    return minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
+  };
+
   handleDeleteButton = async (id) => {
     const { songs } = this.state;
     const originalSongs = songs;
@@ -64,7 +102,7 @@ class ShowPlaylist extends Component {
   };
 
   handleSongClick = (selectedSong) => {
-    this.setState({ selectedSong });
+    this.selectSong(selectedSong);
   };
 
   handleSortClick = (sortColumn) => {
@@ -89,7 +127,7 @@ class ShowPlaylist extends Component {
       return;
     }
     const previousIndex = index === 0 ? 0 : index - 1;
-    this.setState({ selectedSong: sortedSong[previousIndex] });
+    this.selectSong(sortedSong[previousIndex]);
   };
 
   handleNextButtonClick = () => {
@@ -101,7 +139,7 @@ class ShowPlaylist extends Component {
       return;
     }
     const nextIndex = index === sortedSong.length - 1 ? index : index + 1;
-    this.setState({ selectedSong: sortedSong[nextIndex] });
+    this.selectSong(sortedSong[nextIndex]);
   };
 
   handleSongEnded = () => {
@@ -122,28 +160,32 @@ class ShowPlaylist extends Component {
     this.setState({ isPlaying: false });
   };
 
-  getSortedSongs = () => {
-    const { songs, sortColumn, searchQuery } = this.state;
+  handleDuration = (duration) => {
+    this.setState({ duration });
+  };
 
-    let filteredSongs = songs;
-    if (searchQuery) {
-      filteredSongs = songs.filter((song) =>
-        //TODO: improve search method
-        song.name.toLowerCase().startsWith(searchQuery.toLowerCase())
-      );
+  // Needed for sync possible slide bar changes in Player (i.e. SoundCloud). Could be removed.
+  handleProgress = (progressValue) => {
+    this.setState({ progressValue });
+  };
+
+  handleSliderChange = (event, progressValue) => {
+    if (!this.state.isPlaying) {
+      this.handlePlayButtonClick();
     }
-
-    const sortedSongs = _.orderBy(
-      filteredSongs,
-      [sortColumn.path],
-      [sortColumn.order]
-    );
-
-    return sortedSongs;
+    this.setState({ progressValue, seekTo: progressValue });
   };
 
   render() {
-    const { searchQuery, sortColumn, selectedSong, isPlaying } = this.state;
+    const {
+      searchQuery,
+      sortColumn,
+      selectedSong,
+      isPlaying,
+      duration,
+      progressValue,
+      seekTo,
+    } = this.state;
     const data = this.getSortedSongs();
 
     return (
@@ -154,10 +196,13 @@ class ShowPlaylist extends Component {
               <Player
                 selectedSong={selectedSong}
                 isPlaying={isPlaying}
+                seekTo={seekTo}
                 onPlay={this.handlePlayerOnPlay}
                 onPause={this.handlePlayerOnPause}
                 onPlayClick={this.handlePlayButtonClick}
                 onEnded={this.handleSongEnded}
+                onProgress={this.handleProgress}
+                onDuration={this.handleDuration}
               />
             </div>
 
@@ -174,12 +219,24 @@ class ShowPlaylist extends Component {
             </div>
           </div>
         </main>
-        <PlayerControls
-          isPlaying={isPlaying}
-          onPlayClick={this.handlePlayButtonClick}
-          onPreviousClick={this.handlePreviousButtonClick}
-          onNextClick={this.handleNextButtonClick}
-        />
+        <footer className="bg-light" style={{ "padding-bottom": "20px" }}>
+          <ProgressBar
+            defaultValue={0}
+            min={0}
+            max={duration}
+            value={progressValue}
+            onChange={this.handleSliderChange}
+            aria-labelledby="continuous-slider"
+            valueLabelDisplay="auto"
+            valueLabelFormat={(value) => this.formatSliderLaber(value)}
+          />
+          <PlayerControls
+            isPlaying={isPlaying}
+            onPlayClick={this.handlePlayButtonClick}
+            onPreviousClick={this.handlePreviousButtonClick}
+            onNextClick={this.handleNextButtonClick}
+          />
+        </footer>
       </React.Fragment>
     );
   }

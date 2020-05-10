@@ -15,8 +15,9 @@ class SpotitySong extends Component {
       artists: [{ name: "" }],
       album: { images: [{ url: "" }, { url: "" }, { url: "" }] },
     },
+    progressValue: 0, // TODO: maybe remove
   };
-  _isMounted = false; // Used to prevent setStates in Spotify callbacks
+  _isMounted = false; // Used to prevent setStates in Spotify callbacks during shutdown
 
   async componentDidMount() {
     this._isMounted = true;
@@ -31,6 +32,10 @@ class SpotitySong extends Component {
     if (webPlaybackSdk) {
       await webPlaybackSdk.disconnect();
     }
+
+    if (this.interval) {
+      clearInterval(this.interval);
+    }
   }
 
   async componentDidUpdate(prevProps) {
@@ -38,9 +43,15 @@ class SpotitySong extends Component {
       return;
     }
 
+    await this.manageTogglePlayClick(prevProps);
+    await this.manageSeekTo(prevProps);
+  }
+
+  manageTogglePlayClick = async (prevProps) => {
+    // TODO: implement a mechanysm to 100% sync with play/pause button state
+    // (e.g. prevent user clicks when song is not ready)
     const { url, isPlaying } = this.props;
     const { firstTimeClicked, playerState, webPlaybackSdk } = this.state;
-
     if (!prevProps.isPlaying && isPlaying && playerState.paused) {
       if (firstTimeClicked) {
         this.play(url);
@@ -54,9 +65,13 @@ class SpotitySong extends Component {
     if (prevProps.isPlaying && !isPlaying && !playerState.paused) {
       await webPlaybackSdk.pause();
     }
-    // TODO: implement a mechanysm to 100% sync with play/pause button state
-    // (e.g. prevent user clicks when song is not ready)
-  }
+  };
+
+  manageSeekTo = async (prevProps) => {
+    if (prevProps.seekTo !== this.props.seekTo) {
+      await this.state.webPlaybackSdk.seek(this.props.seekTo * 1000);
+    }
+  };
 
   getAlbumCover = async () => {
     const { songId } = this.props;
@@ -107,24 +122,31 @@ class SpotitySong extends Component {
     webPlaybackSdk.addListener("playback_error", ({ message }) => {
       console.error("playback_error", message);
     });
-    webPlaybackSdk.addListener("player_state_changed", (state) => {
-      if (!state || !this._isMounted) {
+    webPlaybackSdk.addListener("player_state_changed", (playerState) => {
+      if (!playerState || !this._isMounted) {
         return;
       }
 
       if (printDebug) {
-        console.log("player_state_changed", state);
-        console.log("current track", state.track_window.current_track);
+        console.log("player_state_changed", playerState);
+        console.log("current track", playerState.track_window.current_track);
       }
-      this.setState({ currentTrack: state.track_window.current_track });
-      this.setState({ playerState: state });
-      this.checkIfSongEnded(state);
+      this.setState({ currentTrack: playerState.track_window.current_track });
+
+      // Add updateTime field to compute progress bar between the callbacks
+      playerState.updateTime = performance.now();
+      this.setState({ playerState });
+
+      this.checkIfSongEnded(playerState);
+
+      this.props.onDuration(playerState.duration / 1000);
     });
 
     webPlaybackSdk.addListener("ready", ({ device_id }) => {
       // TODO: disable play/pause button until everything is loaded
       console.log("Ready with Device ID", device_id);
       this.setState({ isReady: true });
+      this.interval = setInterval(this.getProgressValue, 20);
       if (this.props.isPlaying) {
         this.play(this.props.url);
       }
@@ -160,6 +182,33 @@ class SpotitySong extends Component {
     }
   };
 
+  updateProgressBar(progressValueMilliseconds) {
+    const progressValueSeconds = progressValueMilliseconds / 1000;
+    this.setState({ progressValue: progressValueSeconds });
+    this.props.onProgress(progressValueSeconds);
+  }
+
+  getProgressValue = () => {
+    const { playerState } = this.state;
+
+    if (!playerState) {
+      this.updateProgressBar(0);
+      return;
+    }
+
+    if (playerState.paused) {
+      const progressValue = playerState.position ? playerState.position : 0;
+      this.updateProgressBar(progressValue);
+      return;
+    }
+
+    const position =
+      playerState.position + (performance.now() - playerState.updateTime);
+    const progressValue =
+      position > playerState.duration ? playerState.duration : position;
+    this.updateProgressBar(progressValue);
+  };
+
   getAlbumCoverUrl = (currentTrack) => {
     const albumCoverImage = currentTrack.album.images.find(
       (image) => image.height > 500
@@ -174,7 +223,7 @@ class SpotitySong extends Component {
   };
 
   render() {
-    const { currentTrack, playerState } = this.state;
+    const { currentTrack, playerState, progressValue } = this.state;
     const { isPlaying, onPlayClick } = this.props;
 
     const albumCoverUrl = this.getAlbumCoverUrl(currentTrack);
@@ -202,6 +251,9 @@ class SpotitySong extends Component {
               <h2>
                 <b>Is playing?</b> {isPlaying ? "Yes" : "No"}
               </h2>
+              <h2>
+                <b>Progress Value</b> {progressValue}
+              </h2>
               <button
                 className="btn btn-warning"
                 onClick={(event) => this.spotifySongToEnd(event)}
@@ -223,6 +275,8 @@ SpotitySong.propTypes = {
   isPlaying: PropTypes.bool.isRequired,
   onPlayClick: PropTypes.func.isRequired,
   onEnded: PropTypes.func.isRequired,
+  onProgress: PropTypes.func.isRequired,
+  onDuration: PropTypes.func.isRequired,
 };
 
 export default SpotitySong;
