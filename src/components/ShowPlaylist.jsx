@@ -83,6 +83,13 @@ class ShowPlaylist extends Component {
     return sortedSongs;
   };
 
+  formatSliderLaber = (progressValue) => {
+    const millis = progressValue * 1000;
+    const minutes = Math.floor(millis / 60000);
+    const seconds = ((millis % 60000) / 1000).toFixed(0);
+    return minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
+  };
+
   handleDeleteButton = async (id) => {
     const { songs } = this.state;
     const originalSongs = songs;
@@ -210,12 +217,14 @@ class ShowPlaylist extends Component {
           </div>
         </main>
         <Slider
+          defaultValue={0}
           min={0}
           max={duration}
           value={progressValue}
           onChange={this.handleSliderChange}
           aria-labelledby="continuous-slider"
-          // getAriaValueText={this.state.value.toString()}
+          valueLabelDisplay="auto"
+          valueLabelFormat={(value) => this.formatSliderLaber(value)}
         />
         <PlayerControls
           isPlaying={isPlaying}
