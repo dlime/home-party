@@ -5,8 +5,7 @@ import { getSongs } from "../services/fakePlaylistService";
 import _ from "lodash";
 import Player from "./Player";
 import PlayerControls from "./PlayerControls";
-import { Slider } from "@material-ui/core";
-import { withStyles, makeStyles } from "@material-ui/core/styles";
+import ProgressSlider from "./ProgressSlider";
 
 class ShowPlaylist extends Component {
   state = {
@@ -221,8 +220,7 @@ class ShowPlaylist extends Component {
           </div>
         </main>
         <footer className="bg-light" style={{ "padding-bottom": "20px" }}>
-          <Slider
-            style={{ "padding-top": "0px", "margin-bottom": "5px" }}
+          <ProgressSlider
             defaultValue={0}
             min={0}
             max={duration}
