@@ -1,7 +1,7 @@
 import { Slider } from "@material-ui/core";
 import { withStyles } from "@material-ui/core/styles";
 
-const ProgressSlider = withStyles({
+const ProgressBar = withStyles({
   root: {
     color: "#007bff",
     height: 8,
@@ -33,4 +33,4 @@ const ProgressSlider = withStyles({
   },
 })(Slider);
 
-export default ProgressSlider;
+export default ProgressBar;

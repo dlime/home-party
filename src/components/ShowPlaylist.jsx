@@ -5,7 +5,7 @@ import { getSongs } from "../services/fakePlaylistService";
 import _ from "lodash";
 import Player from "./Player";
 import PlayerControls from "./PlayerControls";
-import ProgressSlider from "./ProgressSlider";
+import ProgressBar from "./ProgressBar";
 
 class ShowPlaylist extends Component {
   state = {
@@ -220,7 +220,7 @@ class ShowPlaylist extends Component {
           </div>
         </main>
         <footer className="bg-light" style={{ "padding-bottom": "20px" }}>
-          <ProgressSlider
+          <ProgressBar
             defaultValue={0}
             min={0}
             max={duration}
