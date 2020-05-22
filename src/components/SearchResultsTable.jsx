@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-import SortableTable from "./common/SortableTable";
+import Table from "./common/Table";
 
 class SearchResultsTable extends Component {
   columns = [
@@ -32,10 +32,10 @@ class SearchResultsTable extends Component {
     const { data, onAddSong } = this.props;
 
     return (
-      <SortableTable
+      <Table
         data={data}
         columns={this.columns}
-        onSongClick={onAddSong}
+        onItemClick={onAddSong}
         selectedSong="none"
       />
     );

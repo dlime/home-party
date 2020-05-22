@@ -18,13 +18,13 @@ const rowClass = (song, selectedSong) => {
   return "cursor-pointer" + (song === selectedSong ? " table-active" : "");
 };
 
-const TableBody = ({ selectedSong, data, dataKey, columns, onSongClick }) => {
+const TableBody = ({ selectedSong, data, dataKey, columns, onItemClick }) => {
   return (
     <tbody>
       {data.map((song) => (
         <tr
           key={song[dataKey]}
-          onClick={() => onSongClick(song)}
+          onClick={() => onItemClick(song)}
           className={rowClass(song, selectedSong)}
         >
           {columns.map((column) => (
@@ -44,7 +44,7 @@ TableBody.propTypes = {
   dataKey: PropTypes.string.isRequired,
   data: PropTypes.array.isRequired, // todo: check array elements structure
   columns: PropTypes.array.isRequired, // todo: check array elements structure
-  onSongClick: PropTypes.func.isRequired,
+  onItemClick: PropTypes.func.isRequired,
   selectedSong: PropTypes.object,
 };
 

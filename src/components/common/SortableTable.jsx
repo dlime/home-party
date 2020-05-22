@@ -22,7 +22,7 @@ const SortableTable = ({
         selectedSong={selectedSong}
         data={data}
         columns={columns}
-        onSongClick={onSongClick}
+        onItemClick={onSongClick}
       />
     </table>
   );
