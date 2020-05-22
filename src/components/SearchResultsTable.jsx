@@ -17,7 +17,7 @@ class SearchResultsTable extends Component {
       content: (song) => {
         return (
           <i
-            className="fas fa-trash"
+            className="fas fa-plus-circle"
             onClick={(event) => {
               this.props.onAddSong(song);
               event.stopPropagation();
