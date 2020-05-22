@@ -1,9 +1,11 @@
 import axios from "axios";
 
-axios.defaults.baseURL = "https://api.spotify.com/v1/";
+const spotifyService = axios.create({
+  baseURL: "https://api.spotify.com/v1/",
+});
 
 function setToken(token) {
-  axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+  spotifyService.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 }
 
 axios.interceptors.response.use(null, (error) => {
@@ -23,7 +25,7 @@ axios.interceptors.response.use(null, (error) => {
 });
 
 export default {
-  get: axios.get,
-  put: axios.put,
+  get: spotifyService.get,
+  put: spotifyService.put,
   setToken,
 };
