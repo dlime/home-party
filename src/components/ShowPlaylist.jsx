@@ -192,7 +192,7 @@ class ShowPlaylist extends Component {
       <React.Fragment>
         <main className="container">
           <div className="row">
-            <div className="col">
+            <div className="col-lg">
               <Player
                 selectedSong={selectedSong}
                 isPlaying={isPlaying}
@@ -206,7 +206,7 @@ class ShowPlaylist extends Component {
               />
             </div>
 
-            <div className="col">
+            <div className="col-lg">
               <SearchBox value={searchQuery} onChange={this.handleSearch} />
               <SongsTable
                 data={data}

@@ -67,6 +67,10 @@ code {
   text-decoration: none;
 }
 
+.player-wrapper {
+  width: 100%;
+}
+
 .login-wrapper {
   width: 100%;
   height: 360px;
