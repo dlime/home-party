@@ -1,6 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-import TableHeader from "./TableHeader";
+import SortableTableHeader from "./SortableTableHeader";
 import TableBody from "./TableBody";
 
 const Table = ({
@@ -13,7 +13,11 @@ const Table = ({
 }) => {
   return (
     <table className="table table-hover">
-      <TableHeader columns={columns} sortColumn={sortColumn} onSort={onSort} />
+      <SortableTableHeader
+        columns={columns}
+        sortColumn={sortColumn}
+        onSort={onSort}
+      />
       <TableBody
         selectedSong={selectedSong}
         data={data}

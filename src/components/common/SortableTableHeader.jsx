@@ -26,11 +26,11 @@ const raiseSort = (path, sortColumn, onSort) => {
   }
 };
 
-const TableHeader = ({ columns, sortColumn, onSort }) => {
+const SortableTableHeader = ({ columns, sortColumn, onSort }) => {
   return (
     <thead>
       <tr>
-        {columns.map(column => {
+        {columns.map((column) => {
           return (
             <th
               key={column.path}
@@ -47,10 +47,10 @@ const TableHeader = ({ columns, sortColumn, onSort }) => {
   );
 };
 
-TableHeader.propTypes = {
+SortableTableHeader.propTypes = {
   columns: PropTypes.array.isRequired,
   sortColumn: PropTypes.object.isRequired, // todo: check that contains order / column
-  onSort: PropTypes.func.isRequired
+  onSort: PropTypes.func.isRequired,
 };
 
-export default TableHeader;
+export default SortableTableHeader;
