@@ -6,8 +6,8 @@ import _ from "lodash";
 import Player from "./Player";
 import PlayerControls from "./PlayerControls";
 import ProgressBar from "./ProgressBar";
-import axios from "axios";
 import SearchResultsTable from "./SearchResultsTable";
+import youtubeService from "../services/youtubeService";
 
 class ShowPlaylist extends Component {
   state = {
@@ -99,25 +99,7 @@ class ShowPlaylist extends Component {
 
   handleSearchSubmit = async (query) => {
     try {
-      const youtubeApiKey = process.env.REACT_APP_YOUTUBE_API_KEY;
-      const youtubeSearchOptions =
-        "part=id,snippet&type=video&videoEmbeddable=true&videoSyndicated=true";
-
-      const axiosInstance = axios.create({
-        baseURL: `https://www.googleapis.com/youtube/v3`,
-      });
-
-      const response = await axiosInstance.get(
-        `search?${youtubeSearchOptions}&key=${youtubeApiKey}&q=${query}`
-      );
-      const searchResults = response.data.items.map((item) => {
-        return {
-          host: "YouTube",
-          hostId: item.id.videoId,
-          artist: item.snippet.title,
-          name: "",
-        };
-      });
+      const searchResults = await youtubeService.search(query);
       this.setState({ searchResults });
     } catch (error) {
       console.error(error);
