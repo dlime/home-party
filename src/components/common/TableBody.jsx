@@ -45,7 +45,7 @@ TableBody.propTypes = {
   data: PropTypes.array.isRequired, // todo: check array elements structure
   columns: PropTypes.array.isRequired, // todo: check array elements structure
   onSongClick: PropTypes.func.isRequired,
-  selectedSong: PropTypes.object.isRequired,
+  selectedSong: PropTypes.object,
 };
 
 export default TableBody;

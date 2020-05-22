@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import SortableTableHeader from "./SortableTableHeader";
 import TableBody from "./TableBody";
 
-const Table = ({
+const SortableTable = ({
   selectedSong,
   data,
   columns,
@@ -28,11 +28,11 @@ const Table = ({
   );
 };
 
-Table.propTypes = {
+SortableTable.propTypes = {
   data: PropTypes.array.isRequired,
   columns: PropTypes.array.isRequired,
   onSongClick: PropTypes.func.isRequired,
   selectedSong: PropTypes.object.isRequired,
 };
 
-export default Table;
+export default SortableTable;
