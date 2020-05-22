@@ -6,12 +6,13 @@ import _ from "lodash";
 import Player from "./Player";
 import PlayerControls from "./PlayerControls";
 import ProgressBar from "./ProgressBar";
+import axios from "axios";
+import SearchResultsTable from "./SearchResultsTable";
 
 class ShowPlaylist extends Component {
   state = {
-    searchQuery: "",
+    searchResults: null,
     sortColumn: { path: "name", order: "asc" },
-
     songs: [],
     selectedSong: { hostId: "", host: "" },
     isPlaying: false,
@@ -64,21 +65,8 @@ class ShowPlaylist extends Component {
   };
 
   getSortedSongs = () => {
-    const { songs, sortColumn, searchQuery } = this.state;
-
-    let filteredSongs = songs;
-    if (searchQuery) {
-      filteredSongs = songs.filter((song) =>
-        //TODO: improve search method
-        song.name.toLowerCase().startsWith(searchQuery.toLowerCase())
-      );
-    }
-
-    const sortedSongs = _.orderBy(
-      filteredSongs,
-      [sortColumn.path],
-      [sortColumn.order]
-    );
+    const { songs, sortColumn } = this.state;
+    const sortedSongs = _.orderBy(songs, [sortColumn.path], [sortColumn.order]);
 
     return sortedSongs;
   };
@@ -109,8 +97,39 @@ class ShowPlaylist extends Component {
     this.setState({ sortColumn });
   };
 
-  handleSearch = (query) => {
-    this.setState({ searchQuery: query });
+  handleSearchSubmit = async (query) => {
+    try {
+      const youtubeApiKey = process.env.REACT_APP_YOUTUBE_API_KEY;
+      const youtubeSearchOptions =
+        "part=id,snippet&type=video&videoEmbeddable=true&videoSyndicated=true";
+
+      const axiosInstance = axios.create({
+        baseURL: `https://www.googleapis.com/youtube/v3`,
+      });
+
+      const response = await axiosInstance.get(
+        `search?${youtubeSearchOptions}&key=${youtubeApiKey}&q=${query}`
+      );
+      const searchResults = response.data.items.map((item) => {
+        return {
+          _id: item.id.videoId,
+          host: "YouTube",
+          hostId: item.id.videoId,
+          artist: item.snippet.title,
+          name: "",
+        };
+      });
+      this.setState({ searchResults });
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  handleAddSong = (song) => {
+    const { songs } = this.state;
+    const newSongs = songs;
+    newSongs.push(song);
+    this.setState({ songs: newSongs, searchResults: null });
   };
 
   handlePlayButtonClick = () => {
@@ -178,13 +197,13 @@ class ShowPlaylist extends Component {
 
   render() {
     const {
-      searchQuery,
       sortColumn,
       selectedSong,
       isPlaying,
       duration,
       progressValue,
       seekTo,
+      searchResults,
     } = this.state;
     const data = this.getSortedSongs();
 
@@ -207,19 +226,28 @@ class ShowPlaylist extends Component {
             </div>
 
             <div className="col-lg">
-              <SearchBox value={searchQuery} onChange={this.handleSearch} />
-              <SongsTable
-                data={data}
-                sortColumn={sortColumn}
-                selectedSong={selectedSong}
-                onSongClick={this.handleSongClick}
-                onDelete={this.handleDeleteButton}
-                onSort={this.handleSortClick}
-              />
+              <SearchBox onSubmit={this.handleSearchSubmit} />
+              {!searchResults && (
+                <SongsTable
+                  data={data}
+                  sortColumn={sortColumn}
+                  selectedSong={selectedSong}
+                  onSongClick={this.handleSongClick}
+                  onDelete={this.handleDeleteButton}
+                  onSort={this.handleSortClick}
+                />
+              )}
+              {searchResults && (
+                <SearchResultsTable
+                  data={searchResults}
+                  selectedSong={selectedSong}
+                  onAddSong={this.handleAddSong}
+                />
+              )}
             </div>
           </div>
         </main>
-        <footer className="bg-light" style={{ "padding-bottom": "20px" }}>
+        <footer className="bg-light" style={{ paddingBottom: "20px" }}>
           <ProgressBar
             defaultValue={0}
             min={0}
