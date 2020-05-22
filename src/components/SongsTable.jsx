@@ -19,7 +19,7 @@ class SongsTable extends Component {
           <i
             className="fas fa-trash"
             onClick={(event) => {
-              this.props.onDelete(song._id);
+              this.props.onDelete(song.hostId);
               event.stopPropagation();
             }}
           ></i>

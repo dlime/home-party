@@ -36,11 +36,11 @@ class ShowPlaylist extends Component {
 
   getSelectedSongBeforeRedirect = (songs) => {
     const selectedSong = this.readAndRemoveFromLocalStorage("selectedSong");
-    if (!selectedSong || !selectedSong._id) {
+    if (!selectedSong || !selectedSong.hostId) {
       return songs.length > 0 ? songs[0] : null;
     }
 
-    return songs.find((song) => song._id === selectedSong._id);
+    return songs.find((song) => song.hostId === selectedSong.hostId);
   };
 
   getIsPlayingBeforeRedirect = () => {
@@ -83,7 +83,7 @@ class ShowPlaylist extends Component {
     const originalSongs = songs;
 
     const newSongs = originalSongs.filter((song) => {
-      return song._id !== id;
+      return song.hostId !== id;
     });
 
     this.setState({ songs: newSongs });
@@ -112,7 +112,6 @@ class ShowPlaylist extends Component {
       );
       const searchResults = response.data.items.map((item) => {
         return {
-          _id: item.id.videoId,
           host: "YouTube",
           hostId: item.id.videoId,
           artist: item.snippet.title,

@@ -37,7 +37,7 @@ const TableBody = ({ selectedSong, data, dataKey, columns, onItemClick }) => {
 };
 
 TableBody.defaultProps = {
-  dataKey: "_id",
+  dataKey: "hostId",
 };
 
 TableBody.propTypes = {
