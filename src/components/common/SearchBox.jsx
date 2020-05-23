@@ -1,24 +1,60 @@
-import React from "react";
+import React, { Component } from "react";
 import PropTypes from "prop-types";
 
-const onKeyPress = (event, onSubmit) => {
-  const searchValue = event.currentTarget.value.trim();
-  if (event.key === "Enter" && searchValue) {
-    onSubmit(searchValue);
-    event.currentTarget.value = "";
-  }
-};
+class SearchBox extends Component {
+  state = {
+    value: "",
+  };
 
-function SearchBox({ onSubmit }) {
-  return (
-    <input
-      type="text"
-      name="query"
-      className="form-control my-3"
-      placeholder="Search..."
-      onKeyPress={(e) => onKeyPress(e, onSubmit)}
-    />
-  );
+  onKeyPress = (key) => {
+    if (key === "Enter") {
+      this.submitSearch();
+    }
+  };
+
+  onChange = (value) => {
+    this.setState({ value });
+  };
+
+  submitSearch = () => {
+    const { onSubmit } = this.props;
+    const { value } = this.state;
+    const searchValue = value.trim();
+    if (searchValue) {
+      onSubmit(searchValue);
+      this.setState({ value: "" });
+    }
+  };
+
+  render() {
+    const { value } = this.state;
+    return (
+      <div className="input-group mb-3">
+        <input
+          type="text"
+          name="query"
+          className="form-control my-3"
+          placeholder="Search..."
+          value={value}
+          onKeyPress={(e) => this.onKeyPress(e.key)}
+          onChange={(e) => this.onChange(e.currentTarget.value)}
+        />
+
+        <div className="input-group-append">
+          <button
+            className="btn btn-outline-secondary my-3"
+            style={{
+              width: "58px",
+            }}
+            type="button"
+            onClick={() => this.submitSearch()}
+          >
+            <i className="fas fa-search"></i>
+          </button>
+        </div>
+      </div>
+    );
+  }
 }
 
 SearchBox.propTypes = {
