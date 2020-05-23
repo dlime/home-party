@@ -1,11 +1,11 @@
 import React, { Component } from "react";
-import SearchBox from "./common/SearchBox";
+import _ from "lodash";
 import SongsTable from "./SongsTable";
 import { getSongs } from "../services/fakePlaylistService";
-import _ from "lodash";
 import Player from "./Player";
 import PlayerControls from "./PlayerControls";
 import ProgressBar from "./ProgressBar";
+import SearchBar from "./SearchBar";
 import SearchResultsTable from "./SearchResultsTable";
 import youtubeService from "../services/youtubeService";
 import spotifyService from "../services/spotifyService";
@@ -111,6 +111,10 @@ class ShowPlaylist extends Component {
     }
   };
 
+  handleSearchGoBack = () => {
+    this.setState({ searchResults: null });
+  };
+
   handleAddSong = (song) => {
     const { songs } = this.state;
     const newSongs = songs;
@@ -212,25 +216,11 @@ class ShowPlaylist extends Component {
             </div>
 
             <div className="col-lg">
-              <div className="input-group mb-3">
-                {searchResults && (
-                  <div className="input-group-prepend">
-                    <button
-                      className="btn btn-primary my-3"
-                      type="button"
-                      style={{ width: "86px" }}
-                      onClick={() => this.setState({ searchResults: null })}
-                    >
-                      <i
-                        className="fas fa-angle-left"
-                        style={{ paddingRight: "12px" }}
-                      ></i>
-                      Back
-                    </button>
-                  </div>
-                )}
-                <SearchBox onSubmit={this.handleSearchSubmit} />
-              </div>
+              <SearchBar
+                showBackButton={searchResults ? true : false}
+                onSearchSubmit={this.handleSearchSubmit}
+                onSearchGoBack={this.handleSearchGoBack}
+              />
 
               {!searchResults && (
                 <SongsTable
