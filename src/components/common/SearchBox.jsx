@@ -29,7 +29,7 @@ class SearchBox extends Component {
   render() {
     const { value } = this.state;
     return (
-      <div className="input-group mb-3">
+      <React.Fragment>
         <input
           type="text"
           name="query"
@@ -52,7 +52,7 @@ class SearchBox extends Component {
             <i className="fas fa-search"></i>
           </button>
         </div>
-      </div>
+      </React.Fragment>
     );
   }
 }

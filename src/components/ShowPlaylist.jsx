@@ -212,7 +212,26 @@ class ShowPlaylist extends Component {
             </div>
 
             <div className="col-lg">
-              <SearchBox onSubmit={this.handleSearchSubmit} />
+              <div className="input-group mb-3">
+                {searchResults && (
+                  <div className="input-group-prepend">
+                    <button
+                      className="btn btn-primary my-3"
+                      type="button"
+                      style={{ width: "86px" }}
+                      onClick={() => this.setState({ searchResults: null })}
+                    >
+                      <i
+                        className="fas fa-angle-left"
+                        style={{ paddingRight: "12px" }}
+                      ></i>
+                      Back
+                    </button>
+                  </div>
+                )}
+                <SearchBox onSubmit={this.handleSearchSubmit} />
+              </div>
+
               {!searchResults && (
                 <SongsTable
                   data={data}
