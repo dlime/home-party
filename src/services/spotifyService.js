@@ -16,6 +16,10 @@ function setToken(token) {
 }
 
 async function search(query) {
+  if (!getTokenFromLocalStorage()) {
+    return [];
+  }
+
   const response = await spotifyService.get(
     `search?${searchOptions}&q=${query}`
   );
