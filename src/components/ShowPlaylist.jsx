@@ -8,6 +8,7 @@ import PlayerControls from "./PlayerControls";
 import ProgressBar from "./ProgressBar";
 import SearchResultsTable from "./SearchResultsTable";
 import youtubeService from "../services/youtubeService";
+import spotifyService from "../services/spotifyService";
 
 class ShowPlaylist extends Component {
   state = {
@@ -99,8 +100,11 @@ class ShowPlaylist extends Component {
 
   handleSearchSubmit = async (query) => {
     try {
-      const searchResults = await youtubeService.search(query);
-      this.setState({ searchResults });
+      const youtubeResults = await youtubeService.search(query);
+      const spotifyResults = await spotifyService.search(query);
+      this.setState({
+        searchResults: youtubeResults.concat(spotifyResults),
+      });
     } catch (error) {
       console.error(error);
     }
