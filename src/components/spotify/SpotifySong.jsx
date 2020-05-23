@@ -77,7 +77,9 @@ class SpotitySong extends Component {
     const { songId } = this.props;
     try {
       const response = await spotifyService.get(`tracks/${songId}`);
-      this.setState({ currentTrack: response.data });
+      const currentTrack = response.data;
+      this.setState({ currentTrack });
+      this.props.onDuration(currentTrack.duration_ms / 1000);
     } catch (error) {
       console.log("Error while getting Album cover");
     }
