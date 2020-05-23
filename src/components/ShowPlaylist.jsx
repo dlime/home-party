@@ -29,6 +29,7 @@ class ShowPlaylist extends Component {
   }
 
   manageSpotifyLoginRedirect = (songs) => {
+    spotifyService.setToken();
     const selectedSong = this.getSelectedSongBeforeRedirect(songs);
     const isPlaying = this.getIsPlayingBeforeRedirect();
     this.selectSong(selectedSong);

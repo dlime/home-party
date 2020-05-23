@@ -43,7 +43,7 @@ export const getSpotifyTokenFromHash = () => {
   window.location.hash = "";
 };
 
-export const getToken = () => {
+export const getTokenFromLocalStorage = () => {
   const token = localStorage.getItem("spotifyToken");
   const expiration = JSON.parse(
     localStorage.getItem("spotifyTokenExpireDatetime")
@@ -56,6 +56,5 @@ export const getToken = () => {
     return null;
   }
 
-  spotifyService.setToken(token);
   return token;
 };

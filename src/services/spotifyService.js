@@ -1,4 +1,5 @@
 import axios from "axios";
+import { getTokenFromLocalStorage } from "../components/spotify/Utils";
 
 const searchOptions = "type=track&market=from_token&limit=5";
 
@@ -7,6 +8,10 @@ const spotifyService = axios.create({
 });
 
 function setToken(token) {
+  if (!token) {
+    token = getTokenFromLocalStorage();
+  }
+
   spotifyService.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 }
 
