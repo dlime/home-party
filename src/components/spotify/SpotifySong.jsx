@@ -23,7 +23,7 @@ class SpotitySong extends Component {
     this._isMounted = true;
     await this.waitForSpotifyWebPlaybackSDKToLoad();
     await this.initializePlayer();
-    await this.getAlbumCover();
+    await this.updateCurrentTrack();
   }
 
   async componentWillUnmount() {
@@ -42,10 +42,23 @@ class SpotitySong extends Component {
     if (!this.state.isReady) {
       return;
     }
-
+    await this.manageTrackChange(prevProps);
     await this.manageTogglePlayClick(prevProps);
     await this.manageSeekTo(prevProps);
   }
+
+  manageTrackChange = async (prevProps) => {
+    const { songId, isPlaying, url } = this.props;
+
+    if (prevProps.songId === songId) {
+      return;
+    }
+
+    await this.updateCurrentTrack();
+    if (isPlaying) {
+      this.play(url);
+    }
+  };
 
   manageTogglePlayClick = async (prevProps) => {
     // TODO: implement a mechanysm to 100% sync with play/pause button state
@@ -73,7 +86,7 @@ class SpotitySong extends Component {
     }
   };
 
-  getAlbumCover = async () => {
+  updateCurrentTrack = async () => {
     const { songId } = this.props;
     try {
       const response = await spotifyService.get(`tracks/${songId}`);
