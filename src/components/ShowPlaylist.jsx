@@ -228,7 +228,6 @@ class ShowPlaylist extends Component {
                 onSearchSubmit={this.handleSearchSubmit}
                 onSearchGoBack={this.handleSearchGoBack}
               />
-
               {!searchResults && (
                 <SongsTable
                   data={data}

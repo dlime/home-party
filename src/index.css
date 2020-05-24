@@ -47,7 +47,7 @@ code {
     monospace;
 }
 
-.spotifybtn {
+.btn-spotify {
   background: #1ecd97;
   border-radius: 2em;
   border: 0.2em solid #1ecd97;
@@ -62,9 +62,29 @@ code {
   display: block;
 }
 
-.spotifybtn:hover {
+.btn-spotify:hover {
   color: white;
   text-decoration: none;
+  filter: brightness(1.1);
+}
+
+.btn-spotify-small {
+  background: #1ecd97;
+  border-radius: 2em;
+  border: 0.2em solid #1ecd97;
+  color: #1ecd97;
+  cursor: pointer;
+  padding: 0.2em 0.8em;
+  text-transform: uppercase;
+  color: white;
+  font-weight: bold;
+  margin: 10px;
+}
+
+.btn-spotify-small:hover {
+  color: white;
+  text-decoration: none;
+  filter: brightness(1.1);
 }
 
 .player-wrapper {

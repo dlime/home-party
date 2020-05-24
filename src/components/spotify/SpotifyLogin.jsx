@@ -1,27 +1,12 @@
 import React from "react";
 
-import {
-  authorizationEndpoint,
-  clientId,
-  tokenScopes,
-  redirectUri,
-} from "./Utils.js";
-
-const getAuthorizationUrl = () => {
-  return (
-    `${authorizationEndpoint}` +
-    `?client_id=${clientId}` +
-    `&redirect_uri=${redirectUri}` +
-    `&scope=${tokenScopes}` +
-    `&response_type=token`
-  );
-};
+import { getAuthorizationUrl } from "./Utils.js";
 
 const SpotifyLogin = ({ handleLoginClick }) => {
   return (
     <div className="login-wrapper">
       <a
-        className="spotifybtn"
+        className="btn-spotify"
         href={getAuthorizationUrl()}
         onClick={handleLoginClick}
       >
