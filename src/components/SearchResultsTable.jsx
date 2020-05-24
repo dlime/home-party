@@ -1,8 +1,14 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import Table from "./common/Table";
+import { getTokenFromLocalStorage, getAuthorizationUrl } from "./spotify/Utils";
+import Alert from "./common/Alert";
 
 class SearchResultsTable extends Component {
+  state = {
+    showAlert: true,
+  };
+
   columns = [
     {
       path: "name",
@@ -17,7 +23,8 @@ class SearchResultsTable extends Component {
       content: (song) => {
         return (
           <i
-            className="fas fa-plus-circle"
+            className="fas fa-plus-circle fa-lg"
+            style={{ color: "green" }}
             onClick={(event) => {
               this.props.onAddSong(song);
               event.stopPropagation();
@@ -28,16 +35,38 @@ class SearchResultsTable extends Component {
     },
   ];
 
+  handleAlertClick = () => {
+    this.setState({ showAlert: false });
+  };
+
+  loginToSpotifyText = (
+    <React.Fragment>
+      To search songs in Spotify
+      <a className="btn-spotify-small" href={getAuthorizationUrl()}>
+        Login
+      </a>
+    </React.Fragment>
+  );
+
   render() {
     const { data, onAddSong } = this.props;
-
+    const { showAlert } = this.state;
+    const spotifyToken = getTokenFromLocalStorage();
     return (
-      <Table
-        data={data}
-        columns={this.columns}
-        onItemClick={onAddSong}
-        selectedSong="none"
-      />
+      <React.Fragment>
+        {!spotifyToken && showAlert && (
+          <Alert
+            text={this.loginToSpotifyText}
+            onClick={this.handleAlertClick}
+          />
+        )}
+        <Table
+          data={data}
+          columns={this.columns}
+          onItemClick={onAddSong}
+          selectedSong="none"
+        />
+      </React.Fragment>
     );
   }
 }

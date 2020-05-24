@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import _ from "lodash";
+import { Helmet } from "react-helmet";
 import SongsTable from "./SongsTable";
 import { getSongs } from "../services/fakePlaylistService";
 import Player from "./Player";
@@ -199,7 +200,13 @@ class ShowPlaylist extends Component {
 
     return (
       <React.Fragment>
-        <main className="container">
+        <Helmet>
+          <title>
+            {selectedSong.artist + " - " + selectedSong.name + " @ Home Party"}
+          </title>
+        </Helmet>
+
+        <main className="container-fluid">
           <div className="row">
             <div className="col-lg">
               <Player
@@ -221,7 +228,6 @@ class ShowPlaylist extends Component {
                 onSearchSubmit={this.handleSearchSubmit}
                 onSearchGoBack={this.handleSearchGoBack}
               />
-
               {!searchResults && (
                 <SongsTable
                   data={data}

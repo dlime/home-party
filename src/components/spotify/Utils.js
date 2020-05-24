@@ -16,6 +16,16 @@ export const tokenScopes = [
   "user-library-modify",
 ].join("%20");
 
+export const getAuthorizationUrl = () => {
+  return (
+    `${authorizationEndpoint}` +
+    `?client_id=${clientId}` +
+    `&redirect_uri=${redirectUri}` +
+    `&scope=${tokenScopes}` +
+    `&response_type=token`
+  );
+};
+
 export const getSpotifyTokenFromHash = () => {
   if (!window.location.hash) {
     return;

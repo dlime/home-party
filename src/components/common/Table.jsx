@@ -5,10 +5,12 @@ import TableHeader from "./TableHeader";
 
 const Table = ({ data, columns, onItemClick }) => {
   return (
-    <table className="table table-hover">
-      <TableHeader columns={columns} />
-      <TableBody data={data} columns={columns} onItemClick={onItemClick} />
-    </table>
+    <div className="table-responsive">
+      <table className="table table-hover">
+        <TableHeader columns={columns} />
+        <TableBody data={data} columns={columns} onItemClick={onItemClick} />
+      </table>
+    </div>
   );
 };
 
