@@ -17,7 +17,8 @@ class SearchResultsTable extends Component {
       content: (song) => {
         return (
           <i
-            className="fas fa-plus-circle"
+            className="fas fa-plus-circle fa-lg"
+            style={{ color: "green" }}
             onClick={(event) => {
               this.props.onAddSong(song);
               event.stopPropagation();
