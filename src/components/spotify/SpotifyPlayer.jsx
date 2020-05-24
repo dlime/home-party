@@ -2,7 +2,7 @@ import React from "react";
 import SpotifyLogin from "./SpotifyLogin";
 import SpotitySong from "./SpotifySong";
 import PropTypes from "prop-types";
-import { getToken } from "./Utils";
+import { getTokenFromLocalStorage } from "./Utils";
 
 const handleLoginClick = (selectedSong, isPlaying) => {
   localStorage.setItem("selectedSong", JSON.stringify(selectedSong));
@@ -19,7 +19,7 @@ const SpotifyPlayer = ({
   onDuration,
   seekTo,
 }) => {
-  const token = getToken();
+  const token = getTokenFromLocalStorage();
   return (
     <React.Fragment>
       {!token && (

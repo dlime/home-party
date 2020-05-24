@@ -1,17 +1,19 @@
 import React, { Component } from "react";
-import SearchBox from "./common/SearchBox";
+import _ from "lodash";
 import SongsTable from "./SongsTable";
 import { getSongs } from "../services/fakePlaylistService";
-import _ from "lodash";
 import Player from "./Player";
 import PlayerControls from "./PlayerControls";
 import ProgressBar from "./ProgressBar";
+import SearchBar from "./SearchBar";
+import SearchResultsTable from "./SearchResultsTable";
+import youtubeService from "../services/youtubeService";
+import spotifyService from "../services/spotifyService";
 
 class ShowPlaylist extends Component {
   state = {
-    searchQuery: "",
+    searchResults: null,
     sortColumn: { path: "name", order: "asc" },
-
     songs: [],
     selectedSong: { hostId: "", host: "" },
     isPlaying: false,
@@ -27,6 +29,7 @@ class ShowPlaylist extends Component {
   }
 
   manageSpotifyLoginRedirect = (songs) => {
+    spotifyService.setToken();
     const selectedSong = this.getSelectedSongBeforeRedirect(songs);
     const isPlaying = this.getIsPlayingBeforeRedirect();
     this.selectSong(selectedSong);
@@ -35,11 +38,11 @@ class ShowPlaylist extends Component {
 
   getSelectedSongBeforeRedirect = (songs) => {
     const selectedSong = this.readAndRemoveFromLocalStorage("selectedSong");
-    if (!selectedSong || !selectedSong._id) {
+    if (!selectedSong || !selectedSong.hostId) {
       return songs.length > 0 ? songs[0] : null;
     }
 
-    return songs.find((song) => song._id === selectedSong._id);
+    return songs.find((song) => song.hostId === selectedSong.hostId);
   };
 
   getIsPlayingBeforeRedirect = () => {
@@ -64,21 +67,8 @@ class ShowPlaylist extends Component {
   };
 
   getSortedSongs = () => {
-    const { songs, sortColumn, searchQuery } = this.state;
-
-    let filteredSongs = songs;
-    if (searchQuery) {
-      filteredSongs = songs.filter((song) =>
-        //TODO: improve search method
-        song.name.toLowerCase().startsWith(searchQuery.toLowerCase())
-      );
-    }
-
-    const sortedSongs = _.orderBy(
-      filteredSongs,
-      [sortColumn.path],
-      [sortColumn.order]
-    );
+    const { songs, sortColumn } = this.state;
+    const sortedSongs = _.orderBy(songs, [sortColumn.path], [sortColumn.order]);
 
     return sortedSongs;
   };
@@ -95,7 +85,7 @@ class ShowPlaylist extends Component {
     const originalSongs = songs;
 
     const newSongs = originalSongs.filter((song) => {
-      return song._id !== id;
+      return song.hostId !== id;
     });
 
     this.setState({ songs: newSongs });
@@ -109,8 +99,27 @@ class ShowPlaylist extends Component {
     this.setState({ sortColumn });
   };
 
-  handleSearch = (query) => {
-    this.setState({ searchQuery: query });
+  handleSearchSubmit = async (query) => {
+    try {
+      const youtubeResults = await youtubeService.search(query);
+      const spotifyResults = await spotifyService.search(query);
+      this.setState({
+        searchResults: youtubeResults.concat(spotifyResults),
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  handleSearchGoBack = () => {
+    this.setState({ searchResults: null });
+  };
+
+  handleAddSong = (song) => {
+    const { songs } = this.state;
+    const newSongs = songs;
+    newSongs.push(song);
+    this.setState({ songs: newSongs, searchResults: null });
   };
 
   handlePlayButtonClick = () => {
@@ -178,13 +187,13 @@ class ShowPlaylist extends Component {
 
   render() {
     const {
-      searchQuery,
       sortColumn,
       selectedSong,
       isPlaying,
       duration,
       progressValue,
       seekTo,
+      searchResults,
     } = this.state;
     const data = this.getSortedSongs();
 
@@ -207,19 +216,33 @@ class ShowPlaylist extends Component {
             </div>
 
             <div className="col-lg">
-              <SearchBox value={searchQuery} onChange={this.handleSearch} />
-              <SongsTable
-                data={data}
-                sortColumn={sortColumn}
-                selectedSong={selectedSong}
-                onSongClick={this.handleSongClick}
-                onDelete={this.handleDeleteButton}
-                onSort={this.handleSortClick}
+              <SearchBar
+                showBackButton={searchResults ? true : false}
+                onSearchSubmit={this.handleSearchSubmit}
+                onSearchGoBack={this.handleSearchGoBack}
               />
+
+              {!searchResults && (
+                <SongsTable
+                  data={data}
+                  sortColumn={sortColumn}
+                  selectedSong={selectedSong}
+                  onSongClick={this.handleSongClick}
+                  onDelete={this.handleDeleteButton}
+                  onSort={this.handleSortClick}
+                />
+              )}
+              {searchResults && (
+                <SearchResultsTable
+                  data={searchResults}
+                  selectedSong={selectedSong}
+                  onAddSong={this.handleAddSong}
+                />
+              )}
             </div>
           </div>
         </main>
-        <footer className="bg-light" style={{ "padding-bottom": "20px" }}>
+        <footer className="bg-light" style={{ paddingBottom: "20px" }}>
           <ProgressBar
             defaultValue={0}
             min={0}

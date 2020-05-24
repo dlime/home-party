@@ -1,25 +1,13 @@
 import React from "react";
 import PropTypes from "prop-types";
-import TableHeader from "./TableHeader";
 import TableBody from "./TableBody";
+import TableHeader from "./TableHeader";
 
-const Table = ({
-  selectedSong,
-  data,
-  columns,
-  sortColumn,
-  onSort,
-  onSongClick,
-}) => {
+const Table = ({ data, columns, onItemClick }) => {
   return (
     <table className="table table-hover">
-      <TableHeader columns={columns} sortColumn={sortColumn} onSort={onSort} />
-      <TableBody
-        selectedSong={selectedSong}
-        data={data}
-        columns={columns}
-        onSongClick={onSongClick}
-      />
+      <TableHeader columns={columns} />
+      <TableBody data={data} columns={columns} onItemClick={onItemClick} />
     </table>
   );
 };
@@ -27,10 +15,7 @@ const Table = ({
 Table.propTypes = {
   data: PropTypes.array.isRequired,
   columns: PropTypes.array.isRequired,
-  sortColumn: PropTypes.object.isRequired,
-  onSort: PropTypes.func.isRequired,
-  onSongClick: PropTypes.func.isRequired,
-  selectedSong: PropTypes.object.isRequired,
+  onItemClick: PropTypes.func.isRequired,
 };
 
 export default Table;

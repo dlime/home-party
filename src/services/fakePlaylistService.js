@@ -1,6 +1,5 @@
 export const songs = [
   {
-    _id: "5b21ca3eeb7f6fbccd471811",
     artist: "Daft Punk",
     name: "Around the World",
     duration: "160",
@@ -8,7 +7,6 @@ export const songs = [
     hostId: "LKYPYj2XX80",
   },
   {
-    _id: "5b21ca3eeb7f6fbccd471812",
     artist: "Chemical Brothers",
     name: "Star Guitar",
     duration: "100",
@@ -17,7 +15,6 @@ export const songs = [
     hostId: "19mC6xktT1JyyycK6cQaXA",
   },
   {
-    _id: "5b21ca3eeb7f6fbccd471813",
     artist: "Aphex Twin",
     name: "Polynomial-C",
     duration: "110",
@@ -25,7 +22,6 @@ export const songs = [
     hostId: "r-srecords/aphex-twin-polynomial-c-1",
   },
   {
-    _id: "5b21ca3eeb7f6fbccd4718",
     artist: "Aphex Twin",
     name: "Didgeridoo",
     duration: "110",
@@ -33,7 +29,6 @@ export const songs = [
     hostId: "r-srecords/aphex-twin-digeridoo-2",
   },
   {
-    _id: "5b21ca3eeb7f6fbccd471",
     artist: "Cassius",
     name: "Cassius 1999",
     duration: "160",

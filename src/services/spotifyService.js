@@ -1,9 +1,37 @@
 import axios from "axios";
+import { getTokenFromLocalStorage } from "../components/spotify/Utils";
 
-axios.defaults.baseURL = "https://api.spotify.com/v1/";
+const searchOptions = "type=track&market=from_token&limit=5";
+
+const spotifyService = axios.create({
+  baseURL: "https://api.spotify.com/v1/",
+});
 
 function setToken(token) {
-  axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+  if (!token) {
+    token = getTokenFromLocalStorage();
+  }
+
+  spotifyService.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+}
+
+async function search(query) {
+  if (!getTokenFromLocalStorage()) {
+    return [];
+  }
+
+  const response = await spotifyService.get(
+    `search?${searchOptions}&q=${query}`
+  );
+  const formattedResults = response.data.tracks.items.map((item) => {
+    return {
+      host: "Spotify",
+      hostId: item.id,
+      artist: item.artists[0].name,
+      name: item.name,
+    };
+  });
+  return formattedResults;
 }
 
 axios.interceptors.response.use(null, (error) => {
@@ -23,7 +51,9 @@ axios.interceptors.response.use(null, (error) => {
 });
 
 export default {
-  get: axios.get,
-  put: axios.put,
+  get: spotifyService.get,
+  put: spotifyService.put,
   setToken,
+  search,
+  spotifyService,
 };

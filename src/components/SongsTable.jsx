@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-import Table from "./common/Table";
+import SortableTable from "./common/SortableTable";
 
 class SongsTable extends Component {
   columns = [
@@ -19,7 +19,7 @@ class SongsTable extends Component {
           <i
             className="fas fa-trash"
             onClick={(event) => {
-              this.props.onDelete(song._id);
+              this.props.onDelete(song.hostId);
               event.stopPropagation();
             }}
           ></i>
@@ -32,7 +32,7 @@ class SongsTable extends Component {
     const { data, onSort, onSongClick, sortColumn, selectedSong } = this.props;
 
     return (
-      <Table
+      <SortableTable
         selectedSong={selectedSong}
         data={data}
         columns={this.columns}
