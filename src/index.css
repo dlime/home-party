@@ -92,3 +92,42 @@ code {
 .cursor-pointer {
   cursor: pointer;
 }
+
+thead tr:nth-child(1) th {
+  background: white;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.table-responsive::-webkit-scrollbar {
+  width: 14px;
+}
+
+.table-responsive::-webkit-scrollbar-thumb {
+  background-clip: content-box;
+  border: 4px solid transparent;
+  border-radius: 7px;
+  box-shadow: inset 0 0 0 10px;
+}
+
+.table-responsive::-webkit-scrollbar-button {
+  width: 0;
+  height: 0;
+  display: none;
+}
+
+.table-responsive::-webkit-scrollbar-corner {
+  background-color: transparent;
+}
+
+.table-responsive {
+  overflow: scroll;
+  color: #00000000;
+  transition: color 0.3s;
+  height: 400px;
+}
+
+.table-responsive:hover {
+  color: #666666ff;
+}

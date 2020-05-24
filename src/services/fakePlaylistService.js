@@ -35,6 +35,48 @@ export const songs = [
     host: "YouTube",
     hostId: "_PmU6G_Z4n8",
   },
+  {
+    artist: "Cassius",
+    name: "Cassius 1999",
+    duration: "160",
+    host: "YouTube",
+    hostId: "_PmU6G_Z4n8-1",
+  },
+  {
+    artist: "Cassius",
+    name: "Cassius 1999",
+    duration: "160",
+    host: "YouTube",
+    hostId: "_PmU6G_Z4n8-2",
+  },
+  {
+    artist: "Cassius",
+    name: "Cassius 1999",
+    duration: "160",
+    host: "YouTube",
+    hostId: "_PmU6G_Z4n8-3",
+  },
+  {
+    artist: "Cassius",
+    name: "Cassius 1999",
+    duration: "160",
+    host: "YouTube",
+    hostId: "_PmU6G_Z4n8-4",
+  },
+  {
+    artist: "Cassius",
+    name: "Cassius 1999",
+    duration: "160",
+    host: "YouTube",
+    hostId: "_PmU6G_Z4n8-5",
+  },
+  {
+    artist: "Cassius",
+    name: "Cassius 1999",
+    duration: "160",
+    host: "YouTube",
+    hostId: "_PmU6G_Z4n8-6",
+  },
 ];
 
 export function getSongs() {

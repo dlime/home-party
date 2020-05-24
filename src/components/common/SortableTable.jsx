@@ -12,19 +12,21 @@ const SortableTable = ({
   onSongClick,
 }) => {
   return (
-    <table className="table table-hover">
-      <SortableTableHeader
-        columns={columns}
-        sortColumn={sortColumn}
-        onSort={onSort}
-      />
-      <TableBody
-        selectedSong={selectedSong}
-        data={data}
-        columns={columns}
-        onItemClick={onSongClick}
-      />
-    </table>
+    <div className="table-responsive">
+      <table className="table table-hover">
+        <SortableTableHeader
+          columns={columns}
+          sortColumn={sortColumn}
+          onSort={onSort}
+        />
+        <TableBody
+          selectedSong={selectedSong}
+          data={data}
+          columns={columns}
+          onItemClick={onSongClick}
+        />
+      </table>
+    </div>
   );
 };
 
