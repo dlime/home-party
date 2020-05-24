@@ -59,7 +59,6 @@ code {
   font-weight: bold;
 
   margin: 0 auto;
-  display: block;
 }
 
 .btn-spotify:hover {
@@ -107,10 +106,19 @@ code {
   width: 100%;
   min-height: inherit;
   height: 100%;
-  background-color: transparent;
+  background-color: black;
   background-position: center;
   background-repeat: no-repeat;
   background-size: 100% 100%;
+  display: table;
+}
+
+.white-text-centered {
+  display: table-cell;
+  color: white;
+  font-weight: bold;
+  text-align: center;
+  vertical-align: middle;
 }
 
 .cursor-pointer {
