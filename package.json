@@ -20,7 +20,7 @@
     "react-load-script": "0.0.6",
     "react-player": "^2.0.1",
     "react-router-dom": "^5.2.0",
-    "react-scripts": "3.4.3",
+    "react-scripts": "3.4.4",
     "youtube-player": "^5.5.2"
   },
   "scripts": {
